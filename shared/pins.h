@@ -1,7 +1,7 @@
 #ifndef PINS_H
 #define PINS_H
 
-void Pin_Init(void);
+void initPins(void);
 
 //defines pins as human readable names
 
@@ -23,5 +23,9 @@ void Pin_Init(void);
 
 #define LEDStatus PORTAbits.RA7
 #define LEDStatusTris TRISAbits.TRISA7
+
+#define button2 PORTGbits.RG12
+#define button3 PORTGbits.RG13
+#define button1 PORTGbits.RG14
 
 #endif
