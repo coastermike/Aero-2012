@@ -1,5 +1,5 @@
-#include "../shared/pins.h"
 #include <p24FJ256GA110.h>
+#include "../shared/pins.h"
 
 //Sets the Tris bits of the pins that are not part of a peripheral
 void initPins()

@@ -1,6 +1,5 @@
 #include <p24FJ256GA110.h>
-#include "pins.h"
-#include "timer.h"
+#include "../shared/pins.h"
 
 //timer2-Left stepper
 //timer3-Right Stepper

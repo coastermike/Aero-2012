@@ -31,6 +31,12 @@ file_003=.
 file_004=.
 file_005=.
 file_006=.
+file_007=.
+file_008=.
+file_009=.
+file_010=.
+file_011=.
+file_012=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -39,6 +45,12 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
+file_008=no
+file_009=no
+file_010=no
+file_011=no
+file_012=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -47,21 +59,33 @@ file_003=no
 file_004=no
 file_005=no
 file_006=no
+file_007=no
+file_008=no
+file_009=no
+file_010=no
+file_011=no
+file_012=no
 [FILE_INFO]
 file_000=main.c
-file_001=timer.c
-file_002=C:\Users\Michael\Aero-2012\shared\pins.c
-file_003=C:\Users\Michael\Aero-2012\shared\status.c
-file_004=timer.h
-file_005=C:\Users\Michael\Aero-2012\shared\pins.h
-file_006=C:\Users\Michael\Aero-2012\shared\status.h
+file_001=C:\Users\Michael\Aero-2012\shared\pins.c
+file_002=C:\Users\Michael\Aero-2012\shared\status.c
+file_003=C:\Users\Michael\Aero-2012\shared\uart.c
+file_004=C:\Users\Michael\Aero-2012\shared\buttons.c
+file_005=wheels.c
+file_006=brakes.c
+file_007=C:\Users\Michael\Aero-2012\shared\pins.h
+file_008=C:\Users\Michael\Aero-2012\shared\status.h
+file_009=C:\Users\Michael\Aero-2012\shared\uart.h
+file_010=C:\Users\Michael\Aero-2012\shared\buttons.h
+file_011=wheels.h
+file_012=brakes.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
 [TOOL_SETTINGS]
 TS{7D9C6ECE-785D-44CB-BA22-17BF2E119622}=-g
 TS{25AC22BD-2378-4FDB-BFB6-7345A15512D3}=-g -Wall
-TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=-o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)" -Map="$(BINDIR_)$(TARGETBASE).map" --report-mem
+TS{7DAC9A1D-4C45-45D6-B25A-D117C74E8F5A}=-Map="$(BINDIR_)$(TARGETBASE).map" -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TS{509E5861-1E2A-483B-8B6B-CA8DB7F2DD78}=
 [INSTRUMENTED_TRACE]
 enable=0

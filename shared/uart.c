@@ -5,6 +5,7 @@ void initUart()
 {
 	RPINR18bits.U1RXR = 26;
 	RPOR10bits.RP21R = 3;
+	
 	U1MODEbits.BRGH = 1;
 	U1BRG = 15;
 	U1MODEbits.PDSEL = 0b00;	//8-bit data, no parity
