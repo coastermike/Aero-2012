@@ -1,8 +1,8 @@
 #include <p24FJ256GA110.h>
-#include "../shared/pins.h"
+#include "../shared/LEDs.h"
 
 //Sets the Tris bits of the pins that are not part of a peripheral
-void initPins()
+void initLEDs()
 {
 	AD1PCFGL = 0xFFFF;	//sets all pins to digital
 	//setting all Tris bits

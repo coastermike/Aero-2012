@@ -1,6 +1,6 @@
 #include <p24FJ256GA110.h>
 #include "../shared/status.h"
-#include "../shared/pins.h"
+#include "../shared/LEDs.h"
 #include "../shared/uart.h"
 #include "../shared/buttons.h"
 #include "wheels.h"
@@ -20,16 +20,37 @@ int main(void)
 	CLKDIVbits.RCDIV = 0b000;
 	CLKDIVbits.DOZE = 0b000;
 	INTCON1bits.NSTDIS = 1; //Disables interrupt nesting
-	initPins();
+	initLEDs();
 	initStatus();
 	initUart();
 	initButtons();
 	initWheels();
 	initBrakes();
+	LED4 = 1;
+	Nop();
+	Nop();
+	LED5 = 1;
+	Nop();
 	while(1)
 	{
 		LED1 = !sw1LastState;
 		LED2 = !sw2LastState;
 		LED3 = !sw3LastState;
+		if(!sw1LastState)
+		{
+			writeUart(1);
+		}	
+		if(!sw2LastState)
+		{
+			writeUart(2);
+		}
+		if(!sw3LastState)
+		{
+			writeUart(3);
+		}
+		if(sw1LastState && sw2LastState && sw3LastState)
+		{
+			writeUart(0);
+		}	
 	}		
 }	

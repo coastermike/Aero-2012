@@ -1,5 +1,6 @@
 #include <p24FJ256GA110.h>
-#include "../shared/pins.h"
+#include "../shared/LEDs.h"
+#include "../shared/buttons.h"
 
 unsigned char sw1LastState = 1;	//1 represents off since pull up
 unsigned char sw2LastState = 1;

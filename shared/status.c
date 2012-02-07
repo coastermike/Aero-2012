@@ -1,5 +1,5 @@
 #include <p24FJ256GA110.h>
-#include "../shared/pins.h"
+#include "../shared/LEDs.h"
 
 void __attribute__((__interrupt__, no_auto_psv)) _T1Interrupt(void)
 {
