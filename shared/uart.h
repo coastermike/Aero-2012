@@ -2,6 +2,6 @@
 #define UART_H
 
 void initUart(void);
-void writeUart(unsigned char data);
+void writeUart();
 
 #endif

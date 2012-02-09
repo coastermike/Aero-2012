@@ -4,6 +4,24 @@
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
 unsigned char LState = 0, RState = 0;			//State of present pin
 
+void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
+{
+	if(CMSTAT & _C1EVT)
+	{
+		
+	}
+	if(CMSTAT & _C2EVT)
+	{
+		
+	}
+	if(CMSTAT & _C3EVT)
+	{
+		
+	}
+	_CMIF = 0;
+	CM1CONbits.CEVT = 0;
+}
+
 //Left Top sensor
 void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 {
@@ -15,7 +33,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		{
 			if(LState == 1)
 			{
-				//increase count
+				//increase count USE VOLATILE???
 			}	
 			LState = 3;
 			INTCON2bits.INT2EP = 0;
@@ -106,6 +124,52 @@ void initWheels()
 	_INT3IP = 0b101;
 	_INT4IP = 0b101;
 	
-	//init for ir, pressure sensors
+	//init for ir, pressure sensors comparators
+	TRISBbits.TRISB4 = 1;
+	TRISBbits.TRISB3 = 1;
+	TRISBbits.TRISB2 = 1;
+	TRISCbits.TRISC13 = 1;
+	AD1PCFGLbits.PCFG2 = 0;
+	AD1PCFGLbits.PCFG3 = 0;
+	AD1PCFGLbits.PCFG4 = 0;
+	
+	//WOW R on B
+	CM1CONbits.COE = 0;			//disable output pin
+	CM1CONbits.CPOL = 1;		//invert sense
+	CM1CONbits.EVPOL = 0b00;	//no event detection
+	CM1CONbits.CREF = 1;		//CVref
+	CM1CONbits.CCH = 0;			//INB
+	CM1CONbits.CON = 1;
+	
+	//IR V on A and IR sensor on B
+	CM2CONbits.COE = 0;			//disable output pin
+	CM2CONbits.CPOL = 1;		//invert sense
+	CM2CONbits.EVPOL = 0b00;	//no event detection
+	CM2CONbits.CREF = 0;		//INA
+	CM2CONbits.CCH = 0;			//INB
+	CM2CONbits.CON = 1;
+	
+	//WOW L on D
+	CM3CONbits.COE = 0;		//disable output pin
+	CM3CONbits.CPOL = 1;	//invert sense
+	CM3CONbits.EVPOL = 0b00;	//no event detection
+	CM3CONbits.CREF = 1;		//CVref
+	CM3CONbits.CCH = 0b10;		//IND
+	CM3CONbits.CON = 1;
+	
+	CVRCONbits.CVREN = 1;	//turn module on
+	CVRCONbits.CVROE = 0;	//disable output pin
+	CVRCONbits.CVRR = 0;	//higher range
+	CVRCONbits.CVRSS = 0;
+	CVRCONbits.CVR = 0;		//sets voltage reference
+	
+	_CMIF = 0;
+	CM1CONbits.CEVT = 0;
+	CM2CONbits.CEVT = 0;
+	CM3CONbits.CEVT = 0;
+}
+
+void calibrateWOW()
+{
 	
 }
