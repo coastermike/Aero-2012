@@ -109,7 +109,7 @@ void initUart()
 //store variables into a matrix of 28 variables. Then start transmit of 28 bytes.
 void writeUart()
 {
-	transmit[4] = takeoff;
+/*	transmit[4] = takeoff;
 	transmit[5] = takeoff;
 	transmit[6] = landing;
 	transmit[7] = landing;
@@ -136,5 +136,5 @@ void writeUart()
 	transmit[28] = 0;
 	
 	while(U1STAbits.UTXBF);
-	U1TXREG = transmit[0];
+	U1TXREG = transmit[0];*/
 }

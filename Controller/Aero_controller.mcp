@@ -8,7 +8,7 @@ dir_src=
 dir_bin=
 dir_tmp=
 dir_sin=
-dir_inc=
+dir_inc=C:\Program Files (x86)\Microchip\MPLAB C30\support\generic\h
 dir_lib=
 dir_lkr=
 [CAT_FILTERS]
@@ -33,6 +33,8 @@ file_005=.
 file_006=.
 file_007=.
 file_008=.
+file_009=.
+file_010=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -43,6 +45,8 @@ file_005=no
 file_006=no
 file_007=no
 file_008=no
+file_009=no
+file_010=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -53,16 +57,20 @@ file_005=no
 file_006=no
 file_007=no
 file_008=no
+file_009=no
+file_010=no
 [FILE_INFO]
 file_000=C:\Users\Michael\Aero-2012\shared\status.c
 file_001=main.c
 file_002=C:\Users\Michael\Aero-2012\shared\uart.c
 file_003=C:\Users\Michael\Aero-2012\shared\buttons.c
 file_004=C:\Users\Michael\Aero-2012\shared\LEDs.c
-file_005=C:\Users\Michael\Aero-2012\shared\status.h
-file_006=C:\Users\Michael\Aero-2012\shared\uart.h
-file_007=C:\Users\Michael\Aero-2012\shared\buttons.h
-file_008=C:\Users\Michael\Aero-2012\shared\LEDs.h
+file_005=gLCD.c
+file_006=C:\Users\Michael\Aero-2012\shared\status.h
+file_007=C:\Users\Michael\Aero-2012\shared\uart.h
+file_008=C:\Users\Michael\Aero-2012\shared\buttons.h
+file_009=C:\Users\Michael\Aero-2012\shared\LEDs.h
+file_010=gLCD.h
 [SUITE_INFO]
 suite_guid={479DDE59-4D56-455E-855E-FFF59A3DB57E}
 suite_state=
