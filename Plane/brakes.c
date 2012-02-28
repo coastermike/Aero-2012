@@ -1,13 +1,22 @@
 #include <p24FJ256GA110.h>
 #include "../shared/LEDs.h"
 
+unsigned long in1 = 0;
+unsigned long in2 = 0;
+
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void)
 {
+	in1 = IC2BUF;
+	in1 = (in1 << 8) | IC1BUF;
 	_IC1IF = 0;
 }	
 
 void __attribute__((__interrupt__, no_auto_psv)) _IC3Interrupt(void)
 {
+	IC3CON2bits.TRIGSTAT = 0;
+	in2 = IC4BUF;
+	in2 = (in2 << 8) | IC3BUF;
+	IC3CON2bits.TRIGSTAT = 1;
 	_IC3IF = 0;
 }	
 
@@ -44,8 +53,8 @@ void initBrakes()
 	IC2CON2bits.SYNCSEL = 0;
 	IC1CON1bits.ICTSEL = 0b111;
 	IC1CON2bits.SYNCSEL = 0;
-	IC2CON2bits.ICTRIG = 0;
-	IC1CON2bits.ICTRIG = 0;
+	IC2CON2bits.ICTRIG = 1;
+	IC1CON2bits.ICTRIG = 1;
 	IC1CON1bits.ICM = 0b001;
 	//BrakeR input IC2
 	IC4CON2bits.IC32 = 1;
@@ -54,11 +63,11 @@ void initBrakes()
 	IC4CON2bits.SYNCSEL = 0;
 	IC3CON1bits.ICTSEL = 0b111;
 	IC3CON2bits.SYNCSEL = 0;
-	IC2CON2bits.ICTRIG = 0;
-	IC3CON2bits.ICTRIG = 0;
+	IC2CON2bits.ICTRIG = 1;
+	IC3CON2bits.ICTRIG = 1;
 	IC3CON1bits.ICM = 0b001;
-	_IC1IF = 1;
-	_IC3IF = 1;
+	_IC1IE = 1;
+	_IC3IE = 1;
 	_IC1IP = 4;
 	_IC3IP = 4;
 }

@@ -3,20 +3,23 @@
 
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
 unsigned char LState = 0, RState = 0;			//State of present pin
+unsigned int tempcount = 0;
 
 void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 {
-	if(CMSTAT & _C1EVT)
+	if(CMSTAT & _C1EVT)//WOW R
+	{
+		LED2 = 1;
+		LED1 = 0;
+	}
+	if(CMSTAT & _C2EVT)//IR
 	{
 		
 	}
-	if(CMSTAT & _C2EVT)
+	if(CMSTAT & _C3EVT)//WOW L
 	{
-		
-	}
-	if(CMSTAT & _C3EVT)
-	{
-		
+		LED1 = 1;
+		LED2 = 0;
 	}
 	_CMIF = 0;
 	CM1CONbits.CEVT = 0;
@@ -34,6 +37,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 			if(LState == 1)
 			{
 				//increase count USE VOLATILE???
+				tempcount++;
 			}	
 			LState = 3;
 			INTCON2bits.INT2EP = 0;
@@ -50,6 +54,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		if(LState == 3)
 		{
 			//increase count
+			tempcount++;
 		}	
 		LState = 2;
 		INTCON2bits.INT1EP = 0;
@@ -69,6 +74,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 			if(LState == 1)
 			{
 				//increase count
+				tempcount++;
 			}	
 			LState = 3;
 			INTCON2bits.INT1EP = 0;
@@ -85,6 +91,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 		if(LState == 2)
 		{
 			//increase count
+			tempcount++;
 		}	
 		LState = 1;
 		INTCON2bits.INT2EP = 0;
@@ -106,6 +113,10 @@ void __attribute__((interrupt, no_auto_psv)) _INT4Interrupt (void)
 
 void initWheels()
 {
+	TRISDbits.TRISD8 = 1;
+	TRISDbits.TRISD9 = 1;
+	TRISDbits.TRISD15 = 1;
+	TRISFbits.TRISF4 = 1;
 	//INT1-4 for sensors
 	RPINR0bits.INT1R = 4;	//HallTop_L INT1 on RP4
 	RPINR1bits.INT2R = 2;	//HallBottom_L INT2 on RP2

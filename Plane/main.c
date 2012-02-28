@@ -26,11 +26,6 @@ int main(void)
 	initButtons();
 	initWheels();
 	initBrakes();
-	LED4 = 1;
-	Nop();
-	Nop();
-	LED5 = 1;
-	Nop();
 	while(1)
 	{
 		LED1 = !sw1LastState;
@@ -51,6 +46,25 @@ int main(void)
 		if(sw1LastState && sw2LastState && sw3LastState)
 		{
 			writeUart(0);
-		}	
+		}
+		
+		//test code to make LEDs blink to hall effects
+		if(leftHallTop)
+		{
+			LED4 = 1;
+		}
+		else
+		{
+			LED4 = 0;
+		}
+		if(leftHallBottom)
+		{
+			LED5 = 1;
+		}
+		else
+		{
+			LED5 = 0;
+		}
+		//end hall effect test code		
 	}		
 }	

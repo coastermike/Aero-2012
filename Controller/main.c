@@ -14,6 +14,7 @@ extern unsigned char sw1LastState;
 extern unsigned char sw2LastState;
 extern unsigned char sw3LastState;
 
+char st[] = "Hello";
 int main(void)
 {
 	CLKDIVbits.RCDIV = 0b000;
@@ -24,26 +25,38 @@ int main(void)
 	initUart();
 	initButtons();
 	initLCD();
-//	lcd_screenon(1);
-//	Nop();
-//	Nop();
-//	lcd_plotpixel(5,5);
-
-	RW=0;// DI=0;
-	PMADDR = 0x0000;
-	PMDIN1 = 0b00111111;
-	msDelay(100);
-	CS1=1;
-	CS2=0;
-	PMADDR = 0;
-	PMDIN1 = 0b10111000 | 0b001;
-	msDelay(100);
-	PMADDR=0;
-	PMDIN1 = 0b01000000 | (0xF & 0b00111111);
-	msDelay(100);
-	PMADDR=1;
-	PMDIN1 = 0x0;
+	lcd_screenon(1);
+	lcd_cls();
 	
+	lcd_selectside(LEFT);
+	lcd_setpage(0);
+	lcd_setyaddr(4);
+	lcd_write(0xFF);
+	lcd_write(0xFF);
+	lcd_write(0xFF);
+	lcd_plotpixel(5,5);
+
+	lcd_setpage(2);
+	lcd_setyaddr(15);
+	lcd_write(0xFF);
+	lcd_write(0xFF);
+	lcd_write(0xFF);
+	
+	lcd_setpage(3);
+	lcd_setyaddr(0);
+	lcd_putcharsmall('T');
+	lcd_putcharsmall('a');
+	lcd_putcharsmall('k');
+	lcd_putcharsmall('e');
+	lcd_putcharsmall('o');
+	lcd_putcharsmall('f');
+	lcd_putcharsmall('f');
+	lcd_putcharsmall('=');
+	lcd_putcharsmall('1');
+	lcd_putcharsmall('0');
+	lcd_setpage(4);
+	lcd_setyaddr(0);
+	lcd_puts(st);
 	while(1)
 	{
 //		LED1 = !sw1LastState;
