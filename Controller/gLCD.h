@@ -39,9 +39,11 @@ void lcd_selectside(unsigned char sides);
 void lcd_write (unsigned char data);
 unsigned char lcd_read (void);
 void lcd_plotpixel(unsigned char rx, unsigned char ry);
+void lcd_string(unsigned char page, unsigned char yaddress, char *string, unsigned char font);
 void lcd_putchar(char c);
 void lcd_putcharsmall(char c);
 void lcd_puts(char *string);
+void lcd_putsmalls(char *string);
 
 static const char font[]= {
 	0x00, 0x00, 0x00, 0x00,	0x00,// (space)

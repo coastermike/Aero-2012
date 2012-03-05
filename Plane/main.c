@@ -31,22 +31,6 @@ int main(void)
 		LED1 = !sw1LastState;
 		LED2 = !sw2LastState;
 		LED3 = !sw3LastState;
-		if(!sw1LastState)
-		{
-			writeUart(1);
-		}	
-		if(!sw2LastState)
-		{
-			writeUart(2);
-		}
-		if(!sw3LastState)
-		{
-			writeUart(3);
-		}
-		if(sw1LastState && sw2LastState && sw3LastState)
-		{
-			writeUart(0);
-		}
 		
 		//test code to make LEDs blink to hall effects
 		if(leftHallTop)

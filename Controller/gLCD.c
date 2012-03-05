@@ -55,27 +55,25 @@ void _lcd_reset(void)
 	// after Vdd clears 4.5v.
 	// from experimentation, this is bullshit. this seems to
     // work though.
-
-//	delayus(250); // actually .5 ms
-	RESET=1;
-//  delayus(250); // actually .5 ms
+	msDelay(1); // actually .5 ms
 	RESET=0;
+	msDelay(1000); // actually .5 ms
+	RESET=1;
 
 	// check status, and wait if necessary
 
-	while (_lcd_status() & 0b00010000)
-	{
-//		delayus(250); // .5 ms
-	}
+	while (_lcd_status() & 0b00010000);
+
 }
 
 // turn the display on or off
 void lcd_screenon(unsigned char on)
 {
+	msDelay(2000);
 	RW=0;
 	PMADDR = 0;
 	PMDIN1 = 0b00111110 | on;
-	msDelay(100);
+	msDelay(2000);
 }
 
 void lcd_cls(void)
@@ -185,6 +183,20 @@ void lcd_plotpixel(unsigned char rx, unsigned char ry)
 	lcd_write (data | (1 << (ry & 0b111)));
 }
 
+void lcd_string(unsigned char page, unsigned char yaddress, char *string, unsigned char font)
+{
+	lcd_setpage(page);
+	lcd_setyaddr(yaddress);
+	if(font)
+	{
+		lcd_puts(string);
+	}
+	else
+	{
+		lcd_putsmalls(string);
+	}		
+}
+	
 void lcd_putchar(char c)
 {
 	int base;
@@ -214,4 +226,11 @@ void lcd_puts(char *string)
 	unsigned char i=0;
 	while (string[i] != 0)
 	lcd_putchar(string[i++]);
+}
+
+void lcd_putsmalls(char *string)
+{
+	unsigned char i=0;
+	while (string[i] != 0)
+	lcd_putcharsmall(string[i++]);
 }

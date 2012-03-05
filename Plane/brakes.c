@@ -27,6 +27,8 @@ void initBrakes()
 	//reports whichever is the smaller of the counts
 	TRISFbits.TRISF3 = 1;
 	TRISFbits.TRISF2 = 1;
+	TRISDbits.TRISD1 = 0;
+	TRISDbits.TRISD2 = 0;
 	
 	RPINR7bits.IC1R = 16;
 	RPINR8bits.IC3R = 30;
@@ -34,17 +36,21 @@ void initBrakes()
 	RPOR12bits.RP24R = 19;
 	
 	//PWM1 Left setup
-	OC1R = 25000;			//duty cycle of 50%
-	OC1RS = 50000;			//period
+	OC1CON1 = 0;
+	OC1CON2 = 0;
 	OC1CON1bits.OCTSEL = 0b111;
+	OC1R = 0;			//duty cycle of 50%
+	OC1RS = 51000;			//period
 	OC1CON2bits.SYNCSEL = 0x1F;
 	OC1CON1bits.OCM = 0b110;	//PWM, no fault
-	//PWM2 Right setup
-	OC2RS = 50000;
-	OC2R = 25000;
+	//PWM2 right setup
+	OC2CON1 = 0;
+	OC2CON2 = 0;
 	OC2CON1bits.OCTSEL = 0b111;
+	OC2R = 0;			//duty cycle of 50%
+	OC2RS = 51000;			//period
 	OC2CON2bits.SYNCSEL = 0x1F;
-	OC2CON1bits.OCM = 0b110;
+	OC2CON1bits.OCM = 0b110;	//PWM, no fault
 	
 	//BrakeL input IC1
 	IC2CON2bits.IC32 = 1;
