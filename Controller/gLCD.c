@@ -5,6 +5,8 @@
 //CS2 writes left half screen
 //RST needs to be high
 
+unsigned int xCount = 0, pageCount = 0;
+
 void msDelay(unsigned int ms)
 {
 	unsigned long i, temp;
@@ -28,14 +30,6 @@ void initLCD()
 	PMAEN = 0x0001;
 	
 	RESET = 1;
-	
-/*	T2CONbits.T32 = 0;					//SEEMS TO CRASH WITH THIS IN CODE??!?
-	T2CONbits.TCKPS = 0b00;	//1:1 prescalar
-	T2CONbits.TCS = 0;
-	T2CONbits.TGATE = 0;
-	PR2 = 16;				//1us timing
-	T2CONbits.TON = 1;
-	_T2IE=1;*/
 }		
 	
 void setBackLightOn()
@@ -78,23 +72,20 @@ void lcd_screenon(unsigned char on)
 
 void lcd_cls(void)
 {
-	unsigned char i,x,y;
-	for(i=1; i<3; i++)
+	unsigned char x,y;
+	for (x=0; x<8; x++)
 	{
-		lcd_selectside(i);
-		for (x=0; x<8; x++)
+		// set the page (x)
+		lcd_setxaddr(0);
+		pageCount = x;
+		lcd_setpage(x);
+		// set the y address to 0
+		// clear the row
+		for (y=0; y<128; y++)
 		{
-			// set the page (x)
-			lcd_setpage(x);
-			// set the y address to 0
-			lcd_setyaddr(0);
-			// clear the row
-			for (y=0; y<64; y++)
-			{
-				lcd_write(0);
-			}
+			lcd_write(0);
 		}
-	}	
+	}
 }
 
 void lcd_setpage(unsigned char page)
@@ -105,12 +96,24 @@ void lcd_setpage(unsigned char page)
 	PMDIN1 = 0b10111000 | page;
 }
 
-void lcd_setyaddr(unsigned char y)
+void lcd_setxaddr(unsigned char x)
 {
+    xCount = x;
     _lcd_waitbusy();
+   	if (x & 64)
+	{
+		lcd_selectside(RIGHT);
+		x = x - 64;
+	}		
+	else
+	{
+		lcd_selectside(LEFT);
+	}
+	lcd_setpage(pageCount);
+	_lcd_waitbusy();
 	RW=0;
 	PMADDR=0;
-	PMDIN1 = 0b01000000 | (y & 0b00111111);
+	PMDIN1 = 0b01000000 | (x & 0b00111111);
 }
 
 void _lcd_waitbusy(void)
@@ -136,6 +139,21 @@ unsigned char _lcd_status(void)
 
 void lcd_write (unsigned char data)
 {
+	_lcd_waitbusy();
+	if (xCount == 64)
+	{
+//		lcd_selectside(RIGHT);
+//		if(xCount == 64)
+//		{
+			lcd_setxaddr(64);
+			lcd_setpage(pageCount);
+//		}
+	}
+//	else
+//	{
+//		lcd_selectside(LEFT);
+//	}
+	xCount++;
 	_lcd_waitbusy();
 	RW=0;
 	PMADDR=1;
@@ -171,22 +189,24 @@ void lcd_plotpixel(unsigned char rx, unsigned char ry)
 	_lcd_waitbusy();
 	// select the correct side
 	if (rx & 64)
-	lcd_selectside(RIGHT);
+		lcd_selectside(RIGHT);
 	else
-	lcd_selectside(LEFT);
+		lcd_selectside(LEFT);
 	 
 	lcd_setpage( ry >> 3);
-	lcd_setyaddr( rx & 0b00111111);
+	lcd_setxaddr( rx & 0b00111111);
 	data = lcd_read(); // dummy read needed here
 	data = lcd_read();
-	lcd_setyaddr( rx & 0b00111111);
+	lcd_setxaddr( rx & 0b00111111);
 	lcd_write (data | (1 << (ry & 0b111)));
 }
 
-void lcd_string(unsigned char page, unsigned char yaddress, char *string, unsigned char font)
+void lcd_string(unsigned char xaddress, unsigned char page, char *string, unsigned char font)
 {
+	_lcd_waitbusy();
+	pageCount = page;
+	lcd_setxaddr(xaddress);
 	lcd_setpage(page);
-	lcd_setyaddr(yaddress);
 	if(font)
 	{
 		lcd_puts(string);
