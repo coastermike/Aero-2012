@@ -29,8 +29,8 @@ int main(void)
 	lcd_screenon(1);
 	lcd_cls();
 	
-	drawHome();
-	updateHome();
+	initScreens();
+	
 	while(1)
 	{
 		LED1 = !sw1LastState;
