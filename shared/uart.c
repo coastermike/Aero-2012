@@ -8,50 +8,61 @@ unsigned char received = 0;
 unsigned char previous = 0;
 unsigned char transmit[MAXTRANSMIT];
 unsigned char transmitCount = 0;
+unsigned char receive[MAXTRANSMIT];
+unsigned char receiveCount = 0;
 
+unsigned int tempUART = 0;
+
+#ifdef PLANE
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void)
 {
 	writeUart();
+	LED3 = ~LED3;
 	_T2IF = 0;
-}	
+}
+#endif
 
 //U1RX interrupt
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void)
 {
 	_U1RXIF = 0;
 	received = U1RXREG;
-	if(received == 1)
+	if(receiveCount<3)
 	{
-		LED1 = 1;
-		Nop();
-		LED2 = 0;
-		Nop();
-		LED3 = 0;
+		if((received == 0x40) && (receiveCount == 0))
+		{
+			receive[receiveCount] = received;
+			receiveCount++;
+		}
+		else if((received == 0x30) && (receiveCount == 1))
+		{
+			receive[receiveCount] = received;
+			receiveCount++;
+		}
+		else if((received == 0x20) && (receiveCount == 2))
+		{
+			receive[receiveCount] = received;
+			receiveCount++;
+		}
+		else if((received == 0x10) && (receiveCount == 3))
+		{
+			receive[receiveCount] = received;
+			receiveCount++;
+		}
+		else
+		{
+			receiveCount = 0;
+		}
 	}
-	else if(received == 2)
+	else if(receiveCount < MAXTRANSMIT)
 	{
-		LED1 = 0;
-		Nop();
-		LED2 = 1;
-		Nop();
-		LED3 = 0;
-	}
-	else if(received == 3)
-	{
-		LED1 = 0;
-		Nop();
-		LED2 = 0;
-		Nop();
-		LED3 = 1;
+		receive[receiveCount] = received;
+		receiveCount++;
 	}
 	else
 	{
-		LED1 = 0;
-		Nop();
-		LED2 = 0;
-		Nop();
-		LED3 = 0;
-	}
+		receiveCount = 0;
+	}		
 }
 
 //U1TX interrupt
@@ -120,6 +131,7 @@ void initUart()
 	U1MODEbits.UARTEN = 1;		//enable uart
 	U1STAbits.UTXEN = 1;		//enable uart
 	
+	#ifdef PLANE
 	T2CONbits.T32 = 0;
 	T2CONbits.TCKPS = 0b10;	//1:64 prescalar
 	T2CONbits.TCS = 0;
@@ -128,12 +140,14 @@ void initUart()
 	T2CONbits.TON = 1;
 	_T2IE = 1;
 	_T2IP = 4;
+	#endif
 }
 
 //store variables into a matrix of 28 variables. Then start transmit of 28 bytes.
 void writeUart()
 {
-	transmit[4] = 1;//takeoff;
+	tempUART++;
+	transmit[4] = tempUART;//takeoff;
 	transmit[5] = 2;//takeoff;
 	transmit[6] = 2;//landing;
 	transmit[7] = 4;//landing;

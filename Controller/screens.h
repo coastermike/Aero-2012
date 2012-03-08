@@ -3,6 +3,7 @@
 
 void initScreens(void);
 void calculateFeet();
+void createButtonLabels();
 void drawHome();
 void updateHome();
 void drawDebug();

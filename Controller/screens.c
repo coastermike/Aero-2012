@@ -3,20 +3,23 @@
 #include "glcd.h"
 #include "screens.h"
 #include "../shared/buttons.h"
+#include "../shared/LEDs.h"
 
 extern unsigned char sw1LastState;
 extern unsigned char sw2LastState;
 extern unsigned char sw3LastState;
+extern unsigned char receive[];
 
 char takeOffStr[20], takeOffStrUpd[6];
 char landingStr[20], landingStrUpd[6];
 char totalDistStr[20], totalDistStrUpd[6];
+char debugTitle[10], settingsTitle[10], calibrateTitle[10], resetTitle[10];
 char buttonHome[3], buttonDebug[3], buttonSettings[3];
-unsigned int takeoffraw = 4912, landingraw = 4102, totalDistInt = 0, totalDistDec = 0;
+unsigned int takeoffraw = 0, landingraw = 0, totalDistInt = 0, totalDistDec = 0;
 unsigned int takeoffInt = 0, landingInt = 0, takeoffDec = 0, landingDec = 0;
 
 unsigned int screenState = 0;
-
+	
 void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 {
 	//button check
@@ -25,11 +28,11 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 		case 0:	//presently home
 			if(!sw1LastState)
 			{
-				
+				drawDebug();
 			}
 			else if(!sw2LastState)
 			{
-				
+				drawSettings();
 			}
 			else if(!sw3LastState)
 			{
@@ -38,6 +41,8 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			else
 			{
 				updateHome();
+				takeoffraw++;
+				landingraw = landingraw+3;
 			}				
 			break;
 		case 1:	//presently debug
@@ -51,7 +56,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			else if(!sw3LastState)
 			{
-				
+				drawHome();
 			}
 			else
 			{
@@ -69,7 +74,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			else if(!sw3LastState)
 			{
-				
+				drawHome();
 			}
 			else
 			{
@@ -105,18 +110,18 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			else if(!sw3LastState)
 			{
-				
+				drawHome();
 			}
 			else
 			{
 				//updateSettings();
 			}
+			break;
 		default:
 			drawHome();
 			break;
-	}		
-	//screen update
-	updateHome();
+	}
+	LED4=~LED4;
 	_T4IF = 0;
 }
 
@@ -129,8 +134,19 @@ void initScreens()
 	T4CONbits.TGATE = 0;
 	PR4 = 25000;				//100ms timing
 	T4CONbits.TON = 1;
+	_T4IF = 0;
+	_T4IP = 3;
+	_T4IE = 1;
 	
 	drawHome();
+}
+
+//because they seem to disappear if not remade before printing to screen even though global?!?
+void createButtonLabels()
+{
+	sprintf(buttonDebug, "D>");
+	sprintf(buttonHome, "H>");
+	sprintf(buttonSettings, "S>");
 }
 	
 void calculateFeet()
@@ -156,16 +172,14 @@ void drawHome()
 	screenState = 0;
 	lcd_cls();
 	calculateFeet();
-	sprintf(takeOffStr, "Takeoff: %d.%d ft", takeoffInt, takeoffDec);
+	sprintf(takeOffStr, "Takeoff: %d.%d ft ", takeoffInt, takeoffDec);
 	lcd_string(0, 2, takeOffStr, 1);
-	sprintf(landingStr, "Landing: %d.%d ft", landingInt, landingDec);
+	sprintf(landingStr, "Landing: %d.%d ft ", landingInt, landingDec);
 	lcd_string(0, 3, landingStr, 1);
-	sprintf(totalDistStr, "  Total: %d.%d ft", totalDistInt, totalDistDec);
+	sprintf(totalDistStr, "  Total: %d.%d ft ", totalDistInt, totalDistDec);
 	lcd_string(0, 4, totalDistStr, 1);
 	
-	sprintf(buttonDebug, "D>");
-	sprintf(buttonHome, "H>");
-	sprintf(buttonSettings, "S>");
+	createButtonLabels();
 	lcd_string(121, 2, buttonDebug, 0);
 	lcd_string(121, 5, buttonSettings, 0);
 	lcd_string(121, 7, buttonHome, 0);
@@ -174,11 +188,11 @@ void drawHome()
 void updateHome()
 {
 	calculateFeet();
-	sprintf(takeOffStrUpd, "%d.%d ft", takeoffInt, takeoffDec);
+	sprintf(takeOffStrUpd, "%d.%d ft ", takeoffInt, takeoffDec);
 	lcd_string(54, 2, takeOffStrUpd, 1);
-	sprintf(landingStrUpd, "%d.%d ft", landingInt, landingDec);
+	sprintf(landingStrUpd, "%d.%d ft ", landingInt, landingDec);
 	lcd_string(54, 3, landingStrUpd, 1);
-	sprintf(totalDistStrUpd, "%d.%d ft", totalDistInt, totalDistDec);
+	sprintf(totalDistStrUpd, "%d.%d ft ", totalDistInt, totalDistDec);
 	lcd_string(54, 4, totalDistStrUpd, 1);
 }
 
@@ -187,18 +201,39 @@ void drawDebug()
 	screenState = 1;
 	lcd_cls();
 	calculateFeet();
+	sprintf(debugTitle, "DEBUG");
+	lcd_string(0,0, debugTitle, 0);
+	
+	sprintf(takeOffStrUpd, "%d", receive[4]);
+	lcd_string(0, 1, takeOffStrUpd, 0);
+	
 	sprintf(takeOffStrUpd, "%d.%d", takeoffInt, takeoffDec);
-	lcd_string(9, 2, takeOffStrUpd, 1);
+	lcd_string(0, 2, takeOffStrUpd, 0);
+	
+	createButtonLabels();
+	lcd_string(121, 2, buttonDebug, 0);
+	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(121, 7, buttonHome, 0);
 }
 
 void updateDebug()
 {
-	
+	sprintf(takeOffStrUpd, "%d", receive[4]);
+	lcd_string(0, 1, takeOffStrUpd, 0);
 }
 
 void drawCalibrate()
 {
 	screenState = 2;
+	lcd_cls();
+	
+	sprintf(calibrateTitle, "CALIBRATION");
+	lcd_string(0,0, calibrateTitle, 1);
+	
+	createButtonLabels();
+	lcd_string(121, 2, buttonDebug, 0);
+	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(121, 7, buttonHome, 0);
 }
 
 void updateCalibrate()
@@ -209,9 +244,27 @@ void updateCalibrate()
 void drawReset()
 {
 	screenState = 3;
+	lcd_cls();
+	
+	sprintf(resetTitle, "RESET-WARNING");
+	lcd_string(0,0, resetTitle, 0);
+	
+	createButtonLabels();
+	lcd_string(121, 2, buttonDebug, 0);
+	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(121, 7, buttonHome, 0);
 }
 
 void drawSettings()
 {
 	screenState = 4;
+	lcd_cls();
+	
+	sprintf(settingsTitle, "SETTINGS");
+	lcd_string(0,0, settingsTitle, 0);
+	
+	createButtonLabels();
+	lcd_string(121, 2, buttonDebug, 0);
+	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(121, 7, buttonHome, 0);
 }
