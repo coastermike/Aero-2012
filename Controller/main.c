@@ -35,9 +35,6 @@ int main(void)
 	
 	while(1)
 	{
-		LED1 = !sw1LastState;
-		LED2 = !sw2LastState;
-		LED3 = !sw3LastState;
-//		writeUart(1);	
+
 	}	
 }

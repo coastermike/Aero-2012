@@ -17,7 +17,7 @@ unsigned int tempUART = 0;
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void)
 {
 	writeUart();
-	LED3 = ~LED3;
+	LED5 = ~LED5;
 	_T2IF = 0;
 }
 #endif

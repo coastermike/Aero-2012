@@ -14,27 +14,32 @@ char takeOffStr[20], takeOffStrUpd[6];
 char landingStr[20], landingStrUpd[6];
 char totalDistStr[20], totalDistStrUpd[6];
 char debugTitle[10], settingsTitle[10], calibrateTitle[10], resetTitle[10];
-char buttonHome[3], buttonDebug[3], buttonSettings[3];
+char buttonHome[3], buttonDebug[3], buttonSettings[3], buttonReset[3], buttonCalibrate[3], buttonYes[3], buttonNo[3];
 unsigned int takeoffraw = 0, landingraw = 0, totalDistInt = 0, totalDistDec = 0;
 unsigned int takeoffInt = 0, landingInt = 0, takeoffDec = 0, landingDec = 0;
 
 unsigned int screenState = 0;
-	
+unsigned int sw1Pressed = 0, sw2Pressed = 0, sw3Pressed = 0;
+
 void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 {
 	//button check
+	sw1Pressed = swState(1);
+	sw2Pressed = swState(2);
+	sw3Pressed = swState(3);
+	clearSW();
 	switch (screenState)
 	{
 		case 0:	//presently home
-			if(!sw1LastState)
+			if(sw1Pressed)
 			{
 				drawDebug();
 			}
-			else if(!sw2LastState)
+			else if(sw2Pressed)
 			{
 				drawSettings();
 			}
-			else if(!sw3LastState)
+			else if(sw3Pressed)
 			{
 				
 			}
@@ -46,15 +51,15 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}				
 			break;
 		case 1:	//presently debug
-			if(!sw1LastState)
+			if(sw1Pressed)
 			{
 				
 			}
-			else if(!sw2LastState)
+			else if(sw2Pressed)
 			{
-				
+				drawSettings();
 			}
-			else if(!sw3LastState)
+			else if(sw3Pressed)
 			{
 				drawHome();
 			}
@@ -64,15 +69,15 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			break;
 		case 2:	//presently calibrate
-			if(!sw1LastState)
+			if(sw1Pressed)
 			{
 				
 			}
-			else if(!sw2LastState)
+			else if(sw2Pressed)
 			{
 				
 			}
-			else if(!sw3LastState)
+			else if(sw3Pressed)
 			{
 				drawHome();
 			}
@@ -82,17 +87,17 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			break;
 		case 3:	//presently reset
-			if(!sw1LastState)
+			if(sw1Pressed)
 			{
-				
+				drawHome();
 			}
-			else if(!sw2LastState)
+			else if(sw2Pressed)
 			{
-				
+				drawHome();
 			}
-			else if(!sw3LastState)
+			else if(sw3Pressed)
 			{
-				
+				//reset
 			}
 			else
 			{
@@ -100,15 +105,15 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			break;
 		case 4:	//presently Settings
-			if(!sw1LastState)
+			if(sw1Pressed)
 			{
-				
+				drawReset();
 			}
-			else if(!sw2LastState)
+			else if(sw2Pressed)
 			{
-				
+				drawCalibrate();
 			}
-			else if(!sw3LastState)
+			else if(sw3Pressed)
 			{
 				drawHome();
 			}
@@ -147,6 +152,10 @@ void createButtonLabels()
 	sprintf(buttonDebug, "D>");
 	sprintf(buttonHome, "H>");
 	sprintf(buttonSettings, "S>");
+	sprintf(buttonReset, "R>");
+	sprintf(buttonCalibrate, "C>");
+	sprintf(buttonYes, "Y>");
+	sprintf(buttonNo, "N>");
 }
 	
 void calculateFeet()
@@ -182,7 +191,7 @@ void drawHome()
 	createButtonLabels();
 	lcd_string(121, 2, buttonDebug, 0);
 	lcd_string(121, 5, buttonSettings, 0);
-	lcd_string(121, 7, buttonHome, 0);
+//	lcd_string(121, 7, buttonHome, 0);
 }
 
 void updateHome()
@@ -211,7 +220,7 @@ void drawDebug()
 	lcd_string(0, 2, takeOffStrUpd, 0);
 	
 	createButtonLabels();
-	lcd_string(121, 2, buttonDebug, 0);
+//	lcd_string(121, 2, buttonDebug, 0);
 	lcd_string(121, 5, buttonSettings, 0);
 	lcd_string(121, 7, buttonHome, 0);
 }
@@ -231,8 +240,8 @@ void drawCalibrate()
 	lcd_string(0,0, calibrateTitle, 1);
 	
 	createButtonLabels();
-	lcd_string(121, 2, buttonDebug, 0);
-	lcd_string(121, 5, buttonSettings, 0);
+//	lcd_string(121, 2, buttonDebug, 0);
+//	lcd_string(121, 5, buttonSettings, 0);
 	lcd_string(121, 7, buttonHome, 0);
 }
 
@@ -250,9 +259,9 @@ void drawReset()
 	lcd_string(0,0, resetTitle, 0);
 	
 	createButtonLabels();
-	lcd_string(121, 2, buttonDebug, 0);
-	lcd_string(121, 5, buttonSettings, 0);
-	lcd_string(121, 7, buttonHome, 0);
+	lcd_string(121, 2, buttonNo, 0);
+	lcd_string(121, 5, buttonNo, 0);
+	lcd_string(121, 7, buttonYes, 0);
 }
 
 void drawSettings()
@@ -264,7 +273,7 @@ void drawSettings()
 	lcd_string(0,0, settingsTitle, 0);
 	
 	createButtonLabels();
-	lcd_string(121, 2, buttonDebug, 0);
-	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(121, 2, buttonReset, 0);
+	lcd_string(121, 5, buttonCalibrate, 0);
 	lcd_string(121, 7, buttonHome, 0);
 }

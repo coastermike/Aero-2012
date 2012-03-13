@@ -6,5 +6,7 @@
 #define button1 PORTGbits.RG14
 
 void initButtons(void);
+unsigned int swState(unsigned int sw);
+void clearSW();
 
 #endif
