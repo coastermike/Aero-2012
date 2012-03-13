@@ -1,6 +1,9 @@
 #include <p24FJ256GA110.h>
 #include "../shared/LEDs.h"
 
+unsigned int brakeL = 0;
+unsigned int brakeR = 0;
+
 unsigned long in1 = 0;
 unsigned long in2 = 0;
 

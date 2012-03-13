@@ -5,15 +5,12 @@
 #include "../shared/buttons.h"
 #include "wheels.h"
 #include "brakes.h"
+#include "accel.h"
 
 //Config Bits set here
 //Reference p24FJ256GA110.h
 _CONFIG1(FWDTEN_OFF & ICS_PGx2 & COE_OFF  & BKBUG_OFF & GWRP_OFF & GCP_OFF & JTAGEN_OFF)
 _CONFIG2(POSCMOD_NONE & IOL1WAY_OFF & FNOSC_FRCPLL)
-
-extern unsigned char sw1LastState;
-extern unsigned char sw2LastState;
-extern unsigned char sw3LastState;
 
 int main(void)
 {	
@@ -26,14 +23,21 @@ int main(void)
 	initButtons();
 	initWheels();
 	initBrakes();
+	initAccel();
+	
 	while(1)
-	{
-		LED1 = !sw1LastState;
-		LED2 = !sw2LastState;
-		LED3 = !sw3LastState;
-		
+	{	
+		if(CMSTATbits.C2OUT)//IR
+		{
+			LED3 = 1;
+		}
+		else
+		{
+			LED3 = 0;
+		}	
+	
 		//test code to make LEDs blink to hall effects
-		if(leftHallTop)
+/*		if(leftHallTop)
 		{
 			LED4 = 1;
 		}
@@ -48,7 +52,7 @@ int main(void)
 		else
 		{
 			LED5 = 0;
-		}
+		}*/
 		//end hall effect test code		
 	}		
 }	

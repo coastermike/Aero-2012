@@ -2,7 +2,26 @@
 #include "../shared/LEDs.h"
 #include "../shared/uart.h"
 
+#define PLANE
+
 #define MAXTRANSMIT 29
+
+extern unsigned int takeoff;
+extern unsigned int landing;
+extern unsigned int leftWheelTakeoff;
+extern unsigned int rightWheelTakeoff;
+extern unsigned int leftWheelLanding;
+extern unsigned int rightWheelLanding;
+extern unsigned int wowL;
+extern unsigned int wowR;
+extern unsigned int wowCal;
+extern unsigned int IR;
+extern unsigned int brakeL;
+extern unsigned int brakeR;
+extern unsigned int mode;
+extern unsigned int accelX;
+extern unsigned int accelY;
+extern unsigned int accelZ;
 
 unsigned char received = 0;
 unsigned char previous = 0;
@@ -11,22 +30,20 @@ unsigned char transmitCount = 0;
 unsigned char receive[MAXTRANSMIT];
 unsigned char receiveCount = 0;
 
-unsigned int tempUART = 0;
-
-#ifdef PLANE
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt (void)
 {
 	writeUart();
 	LED5 = ~LED5;
 	_T2IF = 0;
 }
-#endif
 
 //U1RX interrupt
 void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void)
 {
 	_U1RXIF = 0;
 	received = U1RXREG;
+	
+	#ifdef CONTROLLER
 	if(receiveCount<3)
 	{
 		if((received == 0x40) && (receiveCount == 0))
@@ -62,7 +79,28 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void)
 	else
 	{
 		receiveCount = 0;
-	}		
+	}
+	if(receiveCount == MAXTRANSMIT)
+	{
+		takeoff = (receive[4]<<8) | receive[5];
+		landing = (receive[6]<<8) | receive[7];
+		leftWheelTakeoff = (receive[8]<<8) | receive[9];
+		rightWheelTakeoff = (receive[10]<<8) | receive[11];
+		leftWheelLanding = (receive[12]<<8) | receive[13];
+		rightWheelLanding = (receive[14]<<8) | receive[15];
+		wowL = receive[16];
+		wowR = receive[17];
+		wowCal = receive[18];
+		IR = receive[19];
+		brakeL = receive[20];
+		brakeR = receive[21];
+		mode = receive[22];
+		accelX = receive[23];
+		accelY = receive[24];
+		accelZ = receive[25];
+		receiveCount = 0;
+	}
+	#endif
 }
 
 //U1TX interrupt
@@ -95,6 +133,9 @@ void __attribute__((interrupt, no_auto_psv)) _U1ErrInterrupt (void)
 	{
 		
 	}
+	_U1RXIE = 1;
+	_U1ERIE = 1;
+	receiveCount = 0;
 }
 	
 void initUart()
@@ -123,7 +164,7 @@ void initUart()
 	U1STAbits.UTXISEL1 = 0;	//interrupt ever transfer, at least one in buffer.
 	U1STAbits.UTXISEL0 = 0;
 	_U1RXIF = 0;				// reset RX flag
-	_U1ERIE = 0;
+	_U1ERIE = 1;
 	_U1RXIP = 5;				//priority 5
 	_U1TXIF = 0;
 	_U1TXIE = 1;
@@ -146,29 +187,28 @@ void initUart()
 //store variables into a matrix of 28 variables. Then start transmit of 28 bytes.
 void writeUart()
 {
-	tempUART++;
-	transmit[4] = tempUART;//takeoff;
-	transmit[5] = 2;//takeoff;
-	transmit[6] = 2;//landing;
-	transmit[7] = 4;//landing;
-	transmit[8] = 5;//leftWheelTakeoff;
-	transmit[9] = 6;//leftWheelTakeoff;
-	transmit[10] = 7;//rightWheelTakeoff;
-	transmit[11] = 8;//rightWheelTakeoff;
-	transmit[12] = 9;//leftWheelLanding;
-	transmit[13] = 10;//leftWheelLanding;
-	transmit[14] = 11;//rightWheelLanding;
-	transmit[15] = 12;//rightWheelLanding;
-	transmit[16] = 13;//wowL;
-	transmit[17] = 14;//wowR;
-	transmit[18] = 15;//wowCal;
-	transmit[19] = 16;//IR;
-	transmit[20] = 0;
-	transmit[21] = 1;
-	transmit[22] = 1;
-	transmit[23] = 1;
-	transmit[24] = 1;
-	transmit[25] = 0;
+	transmit[4] = (char)(takeoff>>8);//takeoff;
+	transmit[5] = (char)takeoff;//takeoff;
+	transmit[6] = (char)(landing>>8);//landing;
+	transmit[7] = (char)landing;//landing;
+	transmit[8] = (char)(leftWheelTakeoff>>8);
+	transmit[9] = (char)(leftWheelTakeoff);
+	transmit[10] = (char)(rightWheelTakeoff>>8);
+	transmit[11] = (char)(rightWheelTakeoff);
+	transmit[12] = (char)(leftWheelLanding>>8);
+	transmit[13] = (char)(leftWheelLanding);
+	transmit[14] = (char)(rightWheelLanding>>8);
+	transmit[15] = (char)(rightWheelLanding);
+	transmit[16] = wowL;//wowL;
+	transmit[17] = wowR;//wowR;
+	transmit[18] = wowCal;//wowCal;
+	transmit[19] = IR;//IR;
+	transmit[20] = brakeL;
+	transmit[21] = brakeR;
+	transmit[22] = mode;
+	transmit[23] = accelX;
+	transmit[24] = accelY;
+	transmit[25] = accelZ;
 	transmit[26] = 0;
 	transmit[27] = 0;
 	transmit[28] = 20;

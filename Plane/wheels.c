@@ -3,6 +3,18 @@
 
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
 unsigned char LState = 0, RState = 0;			//State of present pin
+unsigned int takeoff = 0;
+unsigned int landing = 0;
+unsigned int leftWheelTakeoff = 0;
+unsigned int rightWheelTakeoff = 0;
+unsigned int leftWheelLanding = 0;
+unsigned int rightWheelLanding = 0;
+unsigned int wowL = 0;
+unsigned int wowR = 0;
+unsigned int wowCal = 0;
+unsigned int IR = 0;
+unsigned int mode = 0;
+
 unsigned int tempcount = 0;
 
 void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
@@ -12,9 +24,9 @@ void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 		LED2 = 1;
 		LED1 = 0;
 	}
-	if(CMSTAT & _C2EVT)//IR
+	if(_C2EVT)//IR
 	{
-		
+		LED3 = 1;
 	}
 	if(CMSTAT & _C3EVT)//WOW L
 	{
@@ -22,7 +34,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 		LED2 = 0;
 	}
 	_CMIF = 0;
-	CM1CONbits.CEVT = 0;
+	CM2CONbits.CEVT = 0;
 }
 
 //Left Top sensor
@@ -155,7 +167,7 @@ void initWheels()
 	//IR V on A and IR sensor on B
 	CM2CONbits.COE = 0;			//disable output pin
 	CM2CONbits.CPOL = 1;		//invert sense
-	CM2CONbits.EVPOL = 0b00;	//no event detection
+	CM2CONbits.EVPOL = 0b10;	//no event detection
 	CM2CONbits.CREF = 0;		//INA
 	CM2CONbits.CCH = 0;			//INB
 	CM2CONbits.CON = 1;
@@ -178,6 +190,7 @@ void initWheels()
 	CM1CONbits.CEVT = 0;
 	CM2CONbits.CEVT = 0;
 	CM3CONbits.CEVT = 0;
+	_CMIE = 1;
 }
 
 void calibrateWOW()

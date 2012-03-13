@@ -8,14 +8,36 @@
 extern unsigned char sw1LastState;
 extern unsigned char sw2LastState;
 extern unsigned char sw3LastState;
-extern unsigned char receive[];
+
+unsigned int takeoff = 0;
+unsigned int landing = 0;
+unsigned int leftWheelTakeoff = 0;
+unsigned int rightWheelTakeoff = 0;
+unsigned int leftWheelLanding = 0;
+unsigned int rightWheelLanding = 0;
+unsigned int wowL = 0;
+unsigned int wowR = 0;
+unsigned int wowCal = 0;
+unsigned int IR = 0;
+unsigned int brakeL = 0;
+unsigned int brakeR = 0;
+unsigned int mode = 0;
+unsigned int accelX = 0;
+unsigned int accelY = 0;
+unsigned int accelZ = 0;
 
 char takeOffStr[20], takeOffStrUpd[6];
 char landingStr[20], landingStrUpd[6];
 char totalDistStr[20], totalDistStrUpd[6];
+char wheelTakeoffStr[20], wheelTakeoffStrUpd[10];
+char wheelLandingStr[20], wheelLandingStrUpd[10];
+char wowLStr[20], wowLStrUpd[6], wowRStr[20], wowRStrUpd[6], wowCalStr[20], wowCalStrUpd[6], IRStr[20], IRStrUpd[6];
+char brakeLStr[20], brakeLStrUpd[6], brakeRStr[20], brakeRStrUpd[6];
+char modeStr[20], modeStrUpd[6];
+char accelXStr[20], accelXStrUpd[6], accelYStr[20], accelYStrUpd[6], accelZStr[20], accelZStrUpd[6];
 char debugTitle[10], settingsTitle[10], calibrateTitle[10], resetTitle[10];
 char buttonHome[3], buttonDebug[3], buttonSettings[3], buttonReset[3], buttonCalibrate[3], buttonYes[3], buttonNo[3];
-unsigned int takeoffraw = 0, landingraw = 0, totalDistInt = 0, totalDistDec = 0;
+unsigned int totalDistInt = 0, totalDistDec = 0;
 unsigned int takeoffInt = 0, landingInt = 0, takeoffDec = 0, landingDec = 0;
 
 unsigned int screenState = 0;
@@ -46,8 +68,6 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			else
 			{
 				updateHome();
-				takeoffraw++;
-				landingraw = landingraw+3;
 			}				
 			break;
 		case 1:	//presently debug
@@ -160,10 +180,10 @@ void createButtonLabels()
 	
 void calculateFeet()
 {
-	takeoffInt = takeoffraw/20;
-	takeoffDec = (takeoffraw%20)*5;
-	landingInt = landingraw/20;
-	landingDec = (landingraw%20)*5;
+	takeoffInt = takeoff/20;
+	takeoffDec = (takeoff%20)*5;
+	landingInt = landing/20;
+	landingDec = (landing%20)*5;
 	if((takeoffDec + landingDec) > 99)
 	{
 		totalDistDec = (takeoffDec + landingDec) - 100;
@@ -213,11 +233,32 @@ void drawDebug()
 	sprintf(debugTitle, "DEBUG");
 	lcd_string(0,0, debugTitle, 0);
 	
-	sprintf(takeOffStrUpd, "%d", receive[4]);
-	lcd_string(0, 1, takeOffStrUpd, 0);
+	sprintf(takeOffStr, "Takeoff: %4d", takeoff);
+	lcd_string(0, 1, takeOffStr, 0);
+	sprintf(landingStr, "Landing: %4d", landing);
+	lcd_string(0, 2, landingStr, 0);
 	
-	sprintf(takeOffStrUpd, "%d.%d", takeoffInt, takeoffDec);
-	lcd_string(0, 2, takeOffStrUpd, 0);
+	sprintf(wowLStr, "wowL: %2d", wowL);
+	lcd_string(0,3, wowLStr, 0);
+	sprintf(wowRStr, "wowR: %2d", wowR);
+	lcd_string(0,4, wowRStr, 0);
+	sprintf(wowCalStr, "wowC: %2d", wowCal);
+	lcd_string(0,5, wowCalStr, 0);
+	sprintf(IRStr, "IR: %2d", IR);
+	lcd_string(0,6, IRStr, 0);
+	
+	sprintf(modeStr, "Mode: %2d", mode);
+	lcd_string(0,7, modeStr, 0);
+	
+	sprintf(wheelTakeoffStr, "WheelTO: %4d/%4d", leftWheelTakeoff, rightWheelTakeoff);
+	lcd_string(56, 1, wheelTakeoffStr, 0);
+	sprintf(wheelLandingStr, "WheelLA: %4d/%4d", leftWheelLanding, rightWheelLanding);
+	lcd_string(56, 2, wheelLandingStr, 0);
+	
+	sprintf(brakeLStr, "BrakeL: %3d", brakeL);
+	lcd_string(56, 3, brakeLStr, 0);
+	sprintf(brakeRStr, "BrakeR: %3d", brakeR);
+	lcd_string(56, 4, brakeRStr, 0);
 	
 	createButtonLabels();
 //	lcd_string(121, 2, buttonDebug, 0);
@@ -227,8 +268,32 @@ void drawDebug()
 
 void updateDebug()
 {
-	sprintf(takeOffStrUpd, "%d", receive[4]);
-	lcd_string(0, 1, takeOffStrUpd, 0);
+	sprintf(takeOffStrUpd, "%4d", takeoff);
+	lcd_string(36, 1, takeOffStrUpd, 0);
+	sprintf(landingStrUpd, "%4d", landing);
+	lcd_string(36, 2, landingStrUpd, 0);
+	
+	sprintf(wowLStrUpd, "%2d", wowL);
+	lcd_string(24,3, wowLStrUpd, 0);
+	sprintf(wowRStrUpd, "%2d", wowR);
+	lcd_string(24,4, wowRStrUpd, 0);
+	sprintf(wowCalStrUpd, "%2d", wowCal);
+	lcd_string(24,5, wowCalStrUpd, 0);
+	sprintf(IRStrUpd, "%2d", IR);
+	lcd_string(16,6, IRStrUpd, 0);
+	
+	sprintf(modeStrUpd, "%2d", mode);
+	lcd_string(24,7, modeStrUpd, 0);
+	
+	sprintf(wheelTakeoffStrUpd, "%4d/%4d", leftWheelTakeoff, rightWheelTakeoff);
+	lcd_string(92, 1, wheelTakeoffStrUpd, 0);
+	sprintf(wheelLandingStrUpd, "%4d/%4d", leftWheelLanding, rightWheelLanding);
+	lcd_string(92, 2, wheelLandingStrUpd, 0);
+	
+	sprintf(brakeLStrUpd, "%3d", brakeL);
+	lcd_string(88, 3, brakeLStrUpd, 0);
+	sprintf(brakeRStrUpd, "%3d", brakeR);
+	lcd_string(88, 4, brakeRStrUpd, 0);
 }
 
 void drawCalibrate()
