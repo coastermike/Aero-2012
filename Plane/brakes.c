@@ -9,8 +9,11 @@ unsigned long in2 = 0;
 
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void)
 {
+	IC1CON2bits.TRIGSTAT = 0;
 	in1 = IC2BUF;
 	in1 = (in1 << 8) | IC1BUF;
+	brakeL = in1;
+	IC1CON2bits.TRIGSTAT = 1;
 	_IC1IF = 0;
 }	
 
@@ -19,6 +22,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _IC3Interrupt(void)
 	IC3CON2bits.TRIGSTAT = 0;
 	in2 = IC4BUF;
 	in2 = (in2 << 8) | IC3BUF;
+	brakeR = in2;
 	IC3CON2bits.TRIGSTAT = 1;
 	_IC3IF = 0;
 }	

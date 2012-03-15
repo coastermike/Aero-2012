@@ -255,9 +255,9 @@ void drawDebug()
 	sprintf(wheelLandingStr, "WheelLA: %4d/%4d", leftWheelLanding, rightWheelLanding);
 	lcd_string(56, 2, wheelLandingStr, 0);
 	
-	sprintf(brakeLStr, "BrakeL: %3d", brakeL);
+	sprintf(brakeLStr, "BrakeL: %5d", brakeL);
 	lcd_string(56, 3, brakeLStr, 0);
-	sprintf(brakeRStr, "BrakeR: %3d", brakeR);
+	sprintf(brakeRStr, "BrakeR: %5d", brakeR);
 	lcd_string(56, 4, brakeRStr, 0);
 	
 	createButtonLabels();
@@ -290,9 +290,9 @@ void updateDebug()
 	sprintf(wheelLandingStrUpd, "%4d/%4d", leftWheelLanding, rightWheelLanding);
 	lcd_string(92, 2, wheelLandingStrUpd, 0);
 	
-	sprintf(brakeLStrUpd, "%3d", brakeL);
+	sprintf(brakeLStrUpd, "%5d", brakeL);
 	lcd_string(88, 3, brakeLStrUpd, 0);
-	sprintf(brakeRStrUpd, "%3d", brakeR);
+	sprintf(brakeRStrUpd, "%5d", brakeR);
 	lcd_string(88, 4, brakeRStrUpd, 0);
 }
 

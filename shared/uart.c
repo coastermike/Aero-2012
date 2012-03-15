@@ -2,7 +2,8 @@
 #include "../shared/LEDs.h"
 #include "../shared/uart.h"
 
-#define PLANE
+//#define PLANE
+#define CONTROLLER
 
 #define MAXTRANSMIT 29
 
@@ -92,12 +93,12 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void)
 		wowR = receive[17];
 		wowCal = receive[18];
 		IR = receive[19];
-		brakeL = receive[20];
-		brakeR = receive[21];
-		mode = receive[22];
-		accelX = receive[23];
-		accelY = receive[24];
-		accelZ = receive[25];
+		brakeL = (receive[20]<<8) | receive[21];
+		brakeR = (receive[22]<<8) | receive[23];
+		mode = receive[24];
+		accelX = receive[26];
+		accelY = receive[27];
+		accelZ = receive[28];
 		receiveCount = 0;
 	}
 	#endif
@@ -203,15 +204,15 @@ void writeUart()
 	transmit[17] = wowR;//wowR;
 	transmit[18] = wowCal;//wowCal;
 	transmit[19] = IR;//IR;
-	transmit[20] = brakeL;
-	transmit[21] = brakeR;
-	transmit[22] = mode;
-	transmit[23] = accelX;
-	transmit[24] = accelY;
-	transmit[25] = accelZ;
-	transmit[26] = 0;
-	transmit[27] = 0;
-	transmit[28] = 20;
+	transmit[20] = (char)(brakeL>>8);
+	transmit[21] = (char)brakeL;
+	transmit[22] = (char)(brakeR>>8);
+	transmit[23] = (char)brakeR;
+	transmit[24] = mode;
+	transmit[25] = 0;
+	transmit[26] = accelX;
+	transmit[27] = accelY;
+	transmit[28] = accelZ;
 	
 	while(!U1STAbits.TRMT);
 	U1TXREG = transmit[0];
