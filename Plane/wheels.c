@@ -1,8 +1,9 @@
 #include <p24FJ256GA110.h>
 #include "../shared/LEDs.h"
+#include "wheels.h"
 
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
-unsigned char LState = 0, RState = 0;			//State of present pin
+unsigned char LState = 1, RState = 1;			//State of present pin
 unsigned int takeoff = 0;
 unsigned int landing = 0;
 unsigned int leftWheelTakeoff = 0;
@@ -42,7 +43,9 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 {
 	_INT1IF = 0;
 	
-	if(!TLState)
+	TLState = !leftHallTop;
+	
+	if(TLState)
 	{
 		if(BLState)
 		{
@@ -50,15 +53,14 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 			{
 				//increase count USE VOLATILE???
 				tempcount++;
-			}	
-			LState = 3;
-			INTCON2bits.INT2EP = 0;
-			BLState = 0;
+				leftWheelTakeoff++;
+				LState = 3;
+//				INTCON2bits.INT2EP = 1;
+			}
 		}
 		else
 		{
-			INTCON2bits.INT1EP = 1;
-			TLState = 1;
+			INTCON2bits.INT1EP = 1;	
 		}
 	}
 	else
@@ -67,10 +69,10 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		{
 			//increase count
 			tempcount++;
-		}	
-		LState = 2;
+			leftWheelTakeoff++;
+			LState = 2;
+		}
 		INTCON2bits.INT1EP = 0;
-		TLState = 0;
 	}
 }
 
@@ -79,7 +81,9 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 {
 	_INT2IF = 0;
 	
-	if(!BLState)
+	BLState = !leftHallBottom;
+	
+	if(BLState)
 	{
 		if(TLState)
 		{
@@ -87,14 +91,15 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 			{
 				//increase count
 				tempcount++;
+				leftWheelTakeoff++;
 			}	
 			LState = 3;
-			INTCON2bits.INT1EP = 0;
+			INTCON2bits.INT1EP = 1;
 			TLState = 0;
 		}
 		else
 		{
-			INTCON2bits.INT2EP = 1;
+			INTCON2bits.INT2EP = 0;
 			BLState = 1;
 		}
 	}
@@ -104,6 +109,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 		{
 			//increase count
 			tempcount++;
+			leftWheelTakeoff++;
 		}	
 		LState = 1;
 		INTCON2bits.INT2EP = 0;
@@ -134,18 +140,18 @@ void initWheels()
 	RPINR1bits.INT2R = 2;	//HallBottom_L INT2 on RP2
 	RPINR1bits.INT3R = 10;	//HallTop_R INT3 on RP10
 	RPINR2bits.INT4R = 5;	//HallBottom_R INT4 on RP5
-	INTCON2bits.INT1EP = 0;	//INT on positive edge
-	INTCON2bits.INT2EP = 0;
-	INTCON2bits.INT3EP = 0;
-	INTCON2bits.INT4EP = 0;
+	INTCON2bits.INT1EP = 1;	//INT on negative edge
+	INTCON2bits.INT2EP = 1;
+	INTCON2bits.INT3EP = 1;
+	INTCON2bits.INT4EP = 1;
 	_INT1IE = 1;
 	_INT2IE = 1;
 	_INT3IE = 1;
 	_INT4IE = 1;
-	_INT1IP = 0b101;		//interrupt priority at 5
-	_INT2IP = 0b101;
-	_INT3IP = 0b101;
-	_INT4IP = 0b101;
+	_INT1IP = 5;		//interrupt priority at 5
+	_INT2IP = 5;
+	_INT3IP = 5;
+	_INT4IP = 5;
 	
 	//init for ir, pressure sensors comparators
 	TRISBbits.TRISB4 = 1;

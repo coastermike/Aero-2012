@@ -201,11 +201,11 @@ void drawHome()
 	screenState = 0;
 	lcd_cls();
 	calculateFeet();
-	sprintf(takeOffStr, "Takeoff: %d.%d ft ", takeoffInt, takeoffDec);
+	sprintf(takeOffStr, "Takeoff: %u.%u ft ", takeoffInt, takeoffDec);
 	lcd_string(0, 2, takeOffStr, 1);
-	sprintf(landingStr, "Landing: %d.%d ft ", landingInt, landingDec);
+	sprintf(landingStr, "Landing: %u.%u ft ", landingInt, landingDec);
 	lcd_string(0, 3, landingStr, 1);
-	sprintf(totalDistStr, "  Total: %d.%d ft ", totalDistInt, totalDistDec);
+	sprintf(totalDistStr, "  Total: %u.%u ft ", totalDistInt, totalDistDec);
 	lcd_string(0, 4, totalDistStr, 1);
 	
 	createButtonLabels();
@@ -217,11 +217,11 @@ void drawHome()
 void updateHome()
 {
 	calculateFeet();
-	sprintf(takeOffStrUpd, "%d.%d ft ", takeoffInt, takeoffDec);
+	sprintf(takeOffStrUpd, "%u.%u ft ", takeoffInt, takeoffDec);
 	lcd_string(54, 2, takeOffStrUpd, 1);
-	sprintf(landingStrUpd, "%d.%d ft ", landingInt, landingDec);
+	sprintf(landingStrUpd, "%u.%u ft ", landingInt, landingDec);
 	lcd_string(54, 3, landingStrUpd, 1);
-	sprintf(totalDistStrUpd, "%d.%d ft ", totalDistInt, totalDistDec);
+	sprintf(totalDistStrUpd, "%u.%u ft ", totalDistInt, totalDistDec);
 	lcd_string(54, 4, totalDistStrUpd, 1);
 }
 
@@ -233,31 +233,31 @@ void drawDebug()
 	sprintf(debugTitle, "DEBUG");
 	lcd_string(0,0, debugTitle, 0);
 	
-	sprintf(takeOffStr, "Takeoff: %4d", takeoff);
+	sprintf(takeOffStr, "Takeoff: %4u", takeoff);
 	lcd_string(0, 1, takeOffStr, 0);
-	sprintf(landingStr, "Landing: %4d", landing);
+	sprintf(landingStr, "Landing: %4u", landing);
 	lcd_string(0, 2, landingStr, 0);
 	
-	sprintf(wowLStr, "wowL: %2d", wowL);
+	sprintf(wowLStr, "wowL: %2u", wowL);
 	lcd_string(0,3, wowLStr, 0);
-	sprintf(wowRStr, "wowR: %2d", wowR);
+	sprintf(wowRStr, "wowR: %2u", wowR);
 	lcd_string(0,4, wowRStr, 0);
-	sprintf(wowCalStr, "wowC: %2d", wowCal);
+	sprintf(wowCalStr, "wowC: %2u", wowCal);
 	lcd_string(0,5, wowCalStr, 0);
-	sprintf(IRStr, "IR: %2d", IR);
+	sprintf(IRStr, "IR: %2u", IR);
 	lcd_string(0,6, IRStr, 0);
 	
-	sprintf(modeStr, "Mode: %2d", mode);
+	sprintf(modeStr, "Mode: %2u", mode);
 	lcd_string(0,7, modeStr, 0);
 	
-	sprintf(wheelTakeoffStr, "WheelTO: %4d/%4d", leftWheelTakeoff, rightWheelTakeoff);
+	sprintf(wheelTakeoffStr, "WheelTO: %4u/%4u", leftWheelTakeoff, rightWheelTakeoff);
 	lcd_string(56, 1, wheelTakeoffStr, 0);
-	sprintf(wheelLandingStr, "WheelLA: %4d/%4d", leftWheelLanding, rightWheelLanding);
+	sprintf(wheelLandingStr, "WheelLA: %4u/%4u", leftWheelLanding, rightWheelLanding);
 	lcd_string(56, 2, wheelLandingStr, 0);
 	
-	sprintf(brakeLStr, "BrakeL: %5d", brakeL);
+	sprintf(brakeLStr, "BrakeL: %5u", brakeL);
 	lcd_string(56, 3, brakeLStr, 0);
-	sprintf(brakeRStr, "BrakeR: %5d", brakeR);
+	sprintf(brakeRStr, "BrakeR: %5u", brakeR);
 	lcd_string(56, 4, brakeRStr, 0);
 	
 	createButtonLabels();
@@ -268,31 +268,31 @@ void drawDebug()
 
 void updateDebug()
 {
-	sprintf(takeOffStrUpd, "%4d", takeoff);
+	sprintf(takeOffStrUpd, "%4u", takeoff);
 	lcd_string(36, 1, takeOffStrUpd, 0);
-	sprintf(landingStrUpd, "%4d", landing);
+	sprintf(landingStrUpd, "%4u", landing);
 	lcd_string(36, 2, landingStrUpd, 0);
 	
-	sprintf(wowLStrUpd, "%2d", wowL);
+	sprintf(wowLStrUpd, "%2u", wowL);
 	lcd_string(24,3, wowLStrUpd, 0);
-	sprintf(wowRStrUpd, "%2d", wowR);
+	sprintf(wowRStrUpd, "%2u", wowR);
 	lcd_string(24,4, wowRStrUpd, 0);
-	sprintf(wowCalStrUpd, "%2d", wowCal);
+	sprintf(wowCalStrUpd, "%2u", wowCal);
 	lcd_string(24,5, wowCalStrUpd, 0);
-	sprintf(IRStrUpd, "%2d", IR);
+	sprintf(IRStrUpd, "%2u", IR);
 	lcd_string(16,6, IRStrUpd, 0);
 	
-	sprintf(modeStrUpd, "%2d", mode);
+	sprintf(modeStrUpd, "%2u", mode);
 	lcd_string(24,7, modeStrUpd, 0);
 	
-	sprintf(wheelTakeoffStrUpd, "%4d/%4d", leftWheelTakeoff, rightWheelTakeoff);
+	sprintf(wheelTakeoffStrUpd, "%4u/%4u", leftWheelTakeoff, rightWheelTakeoff);
 	lcd_string(92, 1, wheelTakeoffStrUpd, 0);
-	sprintf(wheelLandingStrUpd, "%4d/%4d", leftWheelLanding, rightWheelLanding);
+	sprintf(wheelLandingStrUpd, "%4u/%4u", leftWheelLanding, rightWheelLanding);
 	lcd_string(92, 2, wheelLandingStrUpd, 0);
 	
-	sprintf(brakeLStrUpd, "%5d", brakeL);
+	sprintf(brakeLStrUpd, "%5u", brakeL);
 	lcd_string(88, 3, brakeLStrUpd, 0);
-	sprintf(brakeRStrUpd, "%5d", brakeR);
+	sprintf(brakeRStrUpd, "%5u", brakeR);
 	lcd_string(88, 4, brakeRStrUpd, 0);
 }
 

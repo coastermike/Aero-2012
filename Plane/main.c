@@ -37,22 +37,22 @@ int main(void)
 		}	
 	
 		//test code to make LEDs blink to hall effects
-/*		if(leftHallTop)
+		if(leftHallTop)
 		{
-			LED4 = 1;
+			LED1 = 1;
 		}
 		else
 		{
-			LED4 = 0;
+			LED1 = 0;
 		}
 		if(leftHallBottom)
 		{
-			LED5 = 1;
+			LED2 = 1;
 		}
 		else
 		{
-			LED5 = 0;
-		}*/
+			LED2 = 0;
+		}
 		//end hall effect test code		
 	}		
 }	
