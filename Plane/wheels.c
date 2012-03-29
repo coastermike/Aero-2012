@@ -3,7 +3,7 @@
 #include "wheels.h"
 
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
-unsigned char LState = 1, RState = 1;			//State of present pin
+unsigned char LState = 0, RState = 0;			//State of present pin
 unsigned int takeoff = 0;
 unsigned int landing = 0;
 unsigned int leftWheelTakeoff = 0;
@@ -17,6 +17,7 @@ unsigned int IR = 0;
 unsigned int mode = 0;
 
 unsigned int tempcount = 0;
+unsigned int tempClear = 0;
 
 void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 {
@@ -49,31 +50,40 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 	{
 		if(BLState)
 		{
-			if(LState == 1)
+			if(LState == 0)
 			{
-				//increase count USE VOLATILE???
-				tempcount++;
+				tempcount = 1;
 				leftWheelTakeoff++;
-				LState = 3;
-//				INTCON2bits.INT2EP = 1;
+				LState = 5;
 			}
 		}
-		else
-		{
-			INTCON2bits.INT1EP = 1;	
-		}
-	}
-	else
-	{
-		if(LState == 3)
+		else if(LState == 4)
 		{
 			//increase count
-			tempcount++;
+			tempcount = 1;
 			leftWheelTakeoff++;
-			LState = 2;
+			LState = 3;
 		}
 		INTCON2bits.INT1EP = 0;
 	}
+	else
+	{
+		//detect going from pins to no pins
+		if(!TLState)
+		{
+			if(!BLState)
+			{
+				if(((LState%2) != 0) && (tempcount == 1))
+				{
+					LState--;
+					tempcount = 0;
+				}	
+			}	
+		}
+		INTCON2bits.INT1EP = 1;
+	}
+	mode = LState;
+	landing = leftWheelTakeoff;
 }
 
 //Left Bottom sensor
@@ -87,34 +97,42 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 	{
 		if(TLState)
 		{
-			if(LState == 1)
+			if(LState == 0)
 			{
 				//increase count
-				tempcount++;
+				tempcount = 1;
 				leftWheelTakeoff++;
-			}	
-			LState = 3;
-			INTCON2bits.INT1EP = 1;
-			TLState = 0;
+				LState = 5;
+			}
+//			INTCON2bits.INT1EP = 1;
 		}
-		else
+		else if(LState == 2)
 		{
-			INTCON2bits.INT2EP = 0;
-			BLState = 1;
+			//increase count
+			tempcount = 1;
+			leftWheelTakeoff++;
+			LState = 1;
 		}
+		INTCON2bits.INT2EP = 0;
 	}
 	else
 	{
-		if(LState == 2)
+		if(!BLState)
 		{
-			//increase count
-			tempcount++;
-			leftWheelTakeoff++;
-		}	
-		LState = 1;
-		INTCON2bits.INT2EP = 0;
-		BLState = 0;
+			if(!TLState)
+			{
+				if(((LState%2) != 0) && (tempcount == 1))
+				{
+					LState--;
+					tempcount = 0;
+				}
+			}	
+		}
+		INTCON2bits.INT2EP = 1;	
+		
 	}
+	mode = LState;
+	landing = leftWheelTakeoff;
 }
 
 //Right Top sensor

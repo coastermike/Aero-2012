@@ -181,7 +181,7 @@ void createButtonLabels()
 void calculateFeet()
 {
 	takeoffInt = takeoff/20;
-	takeoffDec = (takeoff%20)*5;
+	takeoffDec = (takeoff%20)*5;	
 	landingInt = landing/20;
 	landingDec = (landing%20)*5;
 	if((takeoffDec + landingDec) > 99)
@@ -201,11 +201,32 @@ void drawHome()
 	screenState = 0;
 	lcd_cls();
 	calculateFeet();
-	sprintf(takeOffStr, "Takeoff: %u.%u ft ", takeoffInt, takeoffDec);
+	if(takeoffDec == 5 || takeoffDec == 0)
+	{
+		sprintf(takeOffStr, "Takeoff: %u.0%u ft ", takeoffInt, takeoffDec);
+	}
+	else	
+	{
+		sprintf(takeOffStr, "Takeoff: %u.%u ft ", takeoffInt, takeoffDec);
+	}	
 	lcd_string(0, 2, takeOffStr, 1);
-	sprintf(landingStr, "Landing: %u.%u ft ", landingInt, landingDec);
+	if(landingDec == 5 || landingDec == 0)
+	{
+		sprintf(landingStr, "Landing: %u.0%u ft ", landingInt, landingDec);
+	}
+	else
+	{
+		sprintf(landingStr, "Landing: %u.%u ft ", landingInt, landingDec);
+	}		
 	lcd_string(0, 3, landingStr, 1);
-	sprintf(totalDistStr, "  Total: %u.%u ft ", totalDistInt, totalDistDec);
+	if(totalDistDec == 5 || totalDistDec == 0)
+	{
+		sprintf(totalDistStr, "  Total: %u.0%u ft ", totalDistInt, totalDistDec);
+	}
+	else
+	{
+		sprintf(totalDistStr, "  Total: %u.%u ft ", totalDistInt, totalDistDec);
+	}		
 	lcd_string(0, 4, totalDistStr, 1);
 	
 	createButtonLabels();
@@ -217,11 +238,32 @@ void drawHome()
 void updateHome()
 {
 	calculateFeet();
-	sprintf(takeOffStrUpd, "%u.%u ft ", takeoffInt, takeoffDec);
+	if(takeoffDec == 5 || takeoffDec == 0)
+	{
+		sprintf(takeOffStrUpd, "%u.0%u ft ", takeoffInt, takeoffDec);
+	}
+	else	
+	{
+		sprintf(takeOffStrUpd, "%u.%u ft ", takeoffInt, takeoffDec);
+	}	
 	lcd_string(54, 2, takeOffStrUpd, 1);
-	sprintf(landingStrUpd, "%u.%u ft ", landingInt, landingDec);
+	if(landingDec == 5 || landingDec == 0)
+	{
+		sprintf(landingStrUpd, "%u.0%u ft ", landingInt, landingDec);
+	}
+	else
+	{
+		sprintf(landingStrUpd, "%u.%u ft ", landingInt, landingDec);
+	}	
 	lcd_string(54, 3, landingStrUpd, 1);
-	sprintf(totalDistStrUpd, "%u.%u ft ", totalDistInt, totalDistDec);
+	if(totalDistDec == 5 || totalDistDec == 0)
+	{
+		sprintf(totalDistStrUpd, "%u.0%u ft ", totalDistInt, totalDistDec);
+	}
+	else
+	{
+		sprintf(totalDistStrUpd, "%u.%u ft ", totalDistInt, totalDistDec);
+	}	
 	lcd_string(54, 4, totalDistStrUpd, 1);
 }
 
