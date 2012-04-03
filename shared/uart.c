@@ -2,8 +2,8 @@
 #include "../shared/LEDs.h"
 #include "../shared/uart.h"
 
-//#define PLANE
-#define CONTROLLER
+#define PLANE
+//#define CONTROLLER
 
 #define MAXTRANSMIT 29
 

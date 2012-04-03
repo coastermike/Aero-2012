@@ -3,7 +3,7 @@
 #include "wheels.h"
 
 unsigned char TLState = 0, BLState = 0, TRState = 0, BRState = 0; //States of individual hall effect sensors.
-unsigned char LState = 0, RState = 0;			//State of present pin
+unsigned char LState = 1, RState = 1;			//State of present pin
 unsigned int takeoff = 0;
 unsigned int landing = 0;
 unsigned int leftWheelTakeoff = 0;
@@ -50,19 +50,11 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 	{
 		if(BLState)
 		{
-			if(LState == 0)
-			{
-				tempcount = 1;
-				leftWheelTakeoff++;
-				LState = 5;
-			}
+			tempcount = 3;
 		}
-		else if(LState == 4)
+		else
 		{
-			//increase count
-			tempcount = 1;
-			leftWheelTakeoff++;
-			LState = 3;
+			tempcount = 2;
 		}
 		INTCON2bits.INT1EP = 0;
 	}
@@ -73,11 +65,30 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		{
 			if(!BLState)
 			{
-				if(((LState%2) != 0) && (tempcount == 1))
+				switch(LState)
 				{
-					LState--;
-					tempcount = 0;
-				}	
+					case 1:
+						if(tempcount == 3)
+						{
+							LState = 3;
+							leftWheelTakeoff++;
+						}
+						break;
+					case 2:
+						if(tempcount == 1)
+						{
+							LState = 1;
+							leftWheelTakeoff++;
+						}
+						break;
+					case 3:
+						if(tempcount == 2)
+						{
+							LState = 2;
+							leftWheelTakeoff++;
+						}
+						break;
+				}			
 			}	
 		}
 		INTCON2bits.INT1EP = 1;
@@ -97,21 +108,11 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 	{
 		if(TLState)
 		{
-			if(LState == 0)
-			{
-				//increase count
-				tempcount = 1;
-				leftWheelTakeoff++;
-				LState = 5;
-			}
-//			INTCON2bits.INT1EP = 1;
+			tempcount = 3;
 		}
-		else if(LState == 2)
+		else
 		{
-			//increase count
 			tempcount = 1;
-			leftWheelTakeoff++;
-			LState = 1;
 		}
 		INTCON2bits.INT2EP = 0;
 	}
@@ -121,10 +122,29 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 		{
 			if(!TLState)
 			{
-				if(((LState%2) != 0) && (tempcount == 1))
+				switch(LState)
 				{
-					LState--;
-					tempcount = 0;
+					case 1:
+						if(tempcount == 3)
+						{
+							LState = 3;
+							leftWheelTakeoff++;
+						}
+						break;
+					case 2:
+						if(tempcount == 1)
+						{
+							LState = 1;
+							leftWheelTakeoff++;
+						}
+						break;
+					case 3:
+						if(tempcount == 2)
+						{
+							LState = 2;
+							leftWheelTakeoff++;
+						}
+						break;
 				}
 			}	
 		}
