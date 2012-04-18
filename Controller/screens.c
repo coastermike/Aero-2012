@@ -280,11 +280,11 @@ void drawDebug()
 	sprintf(landingStr, "Landing: %4u", landing);
 	lcd_string(0, 2, landingStr, 0);
 	
-	sprintf(wowLStr, "wowL: %2u", wowL);
+	sprintf(wowLStr, "wowL: %4u", wowL);
 	lcd_string(0,3, wowLStr, 0);
-	sprintf(wowRStr, "wowR: %2u", wowR);
+	sprintf(wowRStr, "wowR: %4u", wowR);
 	lcd_string(0,4, wowRStr, 0);
-	sprintf(wowCalStr, "wowC: %2u", wowCal);
+	sprintf(wowCalStr, "wowC: %4u", wowCal);
 	lcd_string(0,5, wowCalStr, 0);
 	sprintf(IRStr, "IR: %2u", IR);
 	lcd_string(0,6, IRStr, 0);
@@ -315,11 +315,11 @@ void updateDebug()
 	sprintf(landingStrUpd, "%4u", landing);
 	lcd_string(36, 2, landingStrUpd, 0);
 	
-	sprintf(wowLStrUpd, "%2u", wowL);
+	sprintf(wowLStrUpd, "%4u", wowL);
 	lcd_string(24,3, wowLStrUpd, 0);
-	sprintf(wowRStrUpd, "%2u", wowR);
+	sprintf(wowRStrUpd, "%4u", wowR);
 	lcd_string(24,4, wowRStrUpd, 0);
-	sprintf(wowCalStrUpd, "%2u", wowCal);
+	sprintf(wowCalStrUpd, "%4u", wowCal);
 	lcd_string(24,5, wowCalStrUpd, 0);
 	sprintf(IRStrUpd, "%2u", IR);
 	lcd_string(16,6, IRStrUpd, 0);

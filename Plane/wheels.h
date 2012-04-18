@@ -6,7 +6,7 @@ void calibrateWOW();
 
 #define leftHallBottom PORTDbits.RD8
 #define leftHallTop PORTDbits.RD9
-#define rightHallTop PORTDbits.D15
-#define rightHallBottom PORTFbits.RF4
+#define rightHallTop PORTFbits.RF4
+#define rightHallBottom PORTDbits.RD15
 
 #endif

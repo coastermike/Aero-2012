@@ -6,6 +6,7 @@
 #include "wheels.h"
 #include "brakes.h"
 #include "accel.h"
+#include "analog.h"
 
 //Config Bits set here
 //Reference p24FJ256GA110.h
@@ -18,26 +19,29 @@ int main(void)
 	CLKDIVbits.DOZE = 0b000;
 	INTCON1bits.NSTDIS = 1; //Disables interrupt nesting
 	initLEDs();
+	initAnalog();
 	initStatus();
 	initUart();
 	initButtons();
 	initWheels();
 	initBrakes();
 	initAccel();
-	
+	OC1R = 0;
+	OC2R = 0;
 	while(1)
 	{	
-		if(CMSTATbits.C2OUT)//IR
+		AD1CON1bits.ASAM = 1;
+		if(CMSTATbits.C1OUT)//IR
 		{
-			LED3 = 1;
+//			LED3 = 1;
 		}
 		else
 		{
-			LED3 = 0;
-		}	
-	
+//			LED3 = 0;
+		}
+		
 		//test code to make LEDs blink to hall effects
-		if(leftHallTop)
+		if(rightHallTop)
 		{
 			LED1 = 1;
 		}
@@ -45,7 +49,7 @@ int main(void)
 		{
 			LED1 = 0;
 		}
-		if(leftHallBottom)
+		if(rightHallBottom)
 		{
 			LED2 = 1;
 		}

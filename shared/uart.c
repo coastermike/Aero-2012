@@ -17,12 +17,17 @@ extern unsigned int wowL;
 extern unsigned int wowR;
 extern unsigned int wowCal;
 extern unsigned int IR;
-extern unsigned int brakeL;
-extern unsigned int brakeR;
+extern unsigned int brakeSteer;
+extern unsigned int brakeMag;
 extern unsigned int mode;
 extern unsigned int accelX;
 extern unsigned int accelY;
 extern unsigned int accelZ;
+
+extern unsigned int tempOC1;
+extern unsigned int tempOC2;
+extern unsigned int in1;
+extern unsigned int in2;
 
 unsigned char received = 0;
 unsigned char previous = 0;
@@ -93,8 +98,8 @@ void __attribute__((interrupt, no_auto_psv)) _U1RXInterrupt (void)
 		wowR = receive[17];
 		wowCal = receive[18];
 		IR = receive[19];
-		brakeL = (receive[20]<<8) | receive[21];
-		brakeR = (receive[22]<<8) | receive[23];
+		brakeSteer = (receive[20]<<8) | receive[21];
+		brakeMag = (receive[22]<<8) | receive[23];
 		mode = receive[24];
 		accelX = receive[26];
 		accelY = receive[27];
@@ -188,10 +193,10 @@ void initUart()
 //store variables into a matrix of 28 variables. Then start transmit of 28 bytes.
 void writeUart()
 {
-	transmit[4] = (char)(takeoff>>8);//takeoff;
-	transmit[5] = (char)takeoff;//takeoff;
-	transmit[6] = (char)(landing>>8);//landing;
-	transmit[7] = (char)landing;//landing;
+	transmit[4] = (char)(in2>>8);//(takeoff>>8);//takeoff;
+	transmit[5] = (char)(in2);//takeoff;//takeoff;
+	transmit[6] = (char)(in1>>8);//(landing>>8);//landing;
+	transmit[7] = (char)(in1);//landing;//landing;
 	transmit[8] = (char)(leftWheelTakeoff>>8);
 	transmit[9] = (char)(leftWheelTakeoff);
 	transmit[10] = (char)(rightWheelTakeoff>>8);
@@ -200,14 +205,14 @@ void writeUart()
 	transmit[13] = (char)(leftWheelLanding);
 	transmit[14] = (char)(rightWheelLanding>>8);
 	transmit[15] = (char)(rightWheelLanding);
-	transmit[16] = wowL;//wowL;
-	transmit[17] = wowR;//wowR;
+	transmit[16] = brakeMag;//wowL;//wowL;
+	transmit[17] = brakeSteer;//wowR;//wowR;
 	transmit[18] = wowCal;//wowCal;
 	transmit[19] = IR;//IR;
-	transmit[20] = (char)(brakeL>>8);
-	transmit[21] = (char)brakeL;
-	transmit[22] = (char)(brakeR>>8);
-	transmit[23] = (char)brakeR;
+	transmit[20] = (char)(tempOC1>>8);//(brakeSteer>>8);
+	transmit[21] = (char)(tempOC1);//brakeSteer;
+	transmit[22] = (char)(tempOC2>>8);//(brakeMag>>8);
+	transmit[23] = (char)(tempOC2);//brakeMag;
 	transmit[24] = mode;
 	transmit[25] = 0;
 	transmit[26] = accelX;

@@ -16,27 +16,26 @@ unsigned int wowCal = 0;
 unsigned int IR = 0;
 unsigned int mode = 0;
 
-unsigned int tempcount = 0;
+unsigned int tempcount = 0, tempcount1 = 0;
 unsigned int tempClear = 0;
 
 void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 {
-	if(CMSTAT & _C1EVT)//WOW R
+	if(_C1EVT)//WOW R
 	{
-		LED2 = 1;
-		LED1 = 0;
+		
 	}
 	if(_C2EVT)//IR
 	{
-		LED3 = 1;
+//		LED3 = 1;
 	}
-	if(CMSTAT & _C3EVT)//WOW L
+	if(_C3EVT)//WOW L
 	{
-		LED1 = 1;
-		LED2 = 0;
+		
 	}
 	_CMIF = 0;
 	CM2CONbits.CEVT = 0;
+	CM3CONbits.CEVT = 0;
 }
 
 //Left Top sensor
@@ -93,7 +92,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		}
 		INTCON2bits.INT1EP = 1;
 	}
-	mode = LState;
+//	mode = LState;
 	landing = leftWheelTakeoff;
 }
 
@@ -151,7 +150,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 		INTCON2bits.INT2EP = 1;	
 		
 	}
-	mode = LState;
+//	mode = LState;
 	landing = leftWheelTakeoff;
 }
 
@@ -159,12 +158,115 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 void __attribute__((interrupt, no_auto_psv)) _INT3Interrupt (void)
 {
 	_INT3IF = 0;
+	Nop();
+	TRState = rightHallTop;
+	
+	if(TRState)
+	{
+		if(BRState)
+		{
+			tempcount1 = 3;
+		}
+		else
+		{
+			tempcount1 = 2;
+		}
+		INTCON2bits.INT3EP = 1;
+	}
+	else
+	{
+		//detect going from pins to no pins
+		if(!TRState)
+		{
+			if(!BRState)
+			{
+				switch(RState)
+				{
+					case 1:
+						if(tempcount1 == 2)
+						{
+							RState = 2;
+							rightWheelTakeoff++;
+						}
+						break;
+					case 2:
+						if(tempcount1 == 3)
+						{
+							RState = 3;
+							rightWheelTakeoff++;
+						}
+						break;
+					case 3:
+						if(tempcount1 == 1)
+						{
+							RState = 1;
+							rightWheelTakeoff++;
+						}
+						break;
+				}			
+			}	
+		}
+		INTCON2bits.INT3EP = 0;
+	}
+	mode = RState;
+//	landing = rightWheelTakeoff;
 }
 
 //Right Bottom sensor
 void __attribute__((interrupt, no_auto_psv)) _INT4Interrupt (void)
 {
 	_INT4IF = 0;
+	Nop();
+	BRState = rightHallBottom;
+	
+	if(BRState)
+	{
+		if(TRState)
+		{
+			tempcount1 = 3;
+		}
+		else
+		{
+			tempcount1 = 1;
+		}
+		INTCON2bits.INT4EP = 1;
+	}
+	else
+	{
+		if(!BRState)
+		{
+			if(!TRState)
+			{
+				switch(RState)
+				{
+					case 1:
+						if(tempcount1 == 2)
+						{
+							RState = 2;
+							rightWheelTakeoff++;
+						}
+						break;
+					case 2:
+						if(tempcount1 == 3)
+						{
+							RState = 3;
+							rightWheelTakeoff++;
+						}
+						break;
+					case 3:
+						if(tempcount1 == 1)
+						{
+							RState = 1;
+							rightWheelTakeoff++;
+						}
+						break;
+				}
+			}	
+		}
+		INTCON2bits.INT4EP = 0;	
+	}
+	mode = RState;
+//	landing = rightWheelTakeoff;
 }
 
 void initWheels()
@@ -180,8 +282,8 @@ void initWheels()
 	RPINR2bits.INT4R = 5;	//HallBottom_R INT4 on RP5
 	INTCON2bits.INT1EP = 1;	//INT on negative edge
 	INTCON2bits.INT2EP = 1;
-	INTCON2bits.INT3EP = 1;
-	INTCON2bits.INT4EP = 1;
+	INTCON2bits.INT3EP = 0;
+	INTCON2bits.INT4EP = 0;
 	_INT1IE = 1;
 	_INT2IE = 1;
 	_INT3IE = 1;
@@ -201,12 +303,12 @@ void initWheels()
 	AD1PCFGLbits.PCFG4 = 0;
 	
 	//WOW R on B
-	CM1CONbits.COE = 0;			//disable output pin
-	CM1CONbits.CPOL = 1;		//invert sense
-	CM1CONbits.EVPOL = 0b00;	//no event detection
-	CM1CONbits.CREF = 1;		//CVref
-	CM1CONbits.CCH = 0;			//INB
-	CM1CONbits.CON = 1;
+//	CM1CONbits.COE = 0;			//disable output pin
+//	CM1CONbits.CPOL = 1;		//invert sense
+//	CM1CONbits.EVPOL = 0b00;	//no event detection
+//	CM1CONbits.CREF = 1;		//CVref
+//	CM1CONbits.CCH = 0;			//INB
+//	CM1CONbits.CON = 1;
 	
 	//IR V on A and IR sensor on B
 	CM2CONbits.COE = 0;			//disable output pin
@@ -217,23 +319,23 @@ void initWheels()
 	CM2CONbits.CON = 1;
 	
 	//WOW L on D
-	CM3CONbits.COE = 0;		//disable output pin
-	CM3CONbits.CPOL = 1;	//invert sense
-	CM3CONbits.EVPOL = 0b00;	//no event detection
-	CM3CONbits.CREF = 1;		//CVref
-	CM3CONbits.CCH = 0b10;		//IND
-	CM3CONbits.CON = 1;
+//	CM3CONbits.COE = 0;		//disable output pin
+//	CM3CONbits.CPOL = 1;	//invert sense
+//	CM3CONbits.EVPOL = 0b00;	//no event detection
+//	CM3CONbits.CREF = 1;		//CVref
+//	CM3CONbits.CCH = 0b10;		//IND
+//	CM3CONbits.CON = 1;
 	
-	CVRCONbits.CVREN = 1;	//turn module on
-	CVRCONbits.CVROE = 0;	//disable output pin
-	CVRCONbits.CVRR = 0;	//higher range
+	CVRCONbits.CVREN = 1;
+	CVRCONbits.CVROE = 0;
+	CVRCONbits.CVRR = 1;	//scale
 	CVRCONbits.CVRSS = 0;
-	CVRCONbits.CVR = 0;		//sets voltage reference
+	CVRCONbits.CVR = 8;		//vref setting
 	
 	_CMIF = 0;
-	CM1CONbits.CEVT = 0;
+//	CM1CONbits.CEVT = 0;
 	CM2CONbits.CEVT = 0;
-	CM3CONbits.CEVT = 0;
+//	CM3CONbits.CEVT = 0;
 	_CMIE = 1;
 }
 
