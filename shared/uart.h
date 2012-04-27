@@ -3,5 +3,6 @@
 
 void initUart(void);
 void writeUart();
+void writeUartCommand(unsigned char command);
 
 #endif

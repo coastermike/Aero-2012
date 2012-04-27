@@ -4,6 +4,7 @@
 #include "screens.h"
 #include "../shared/buttons.h"
 #include "../shared/LEDs.h"
+#include "../shared/uart.h"
 
 extern unsigned char sw1LastState;
 extern unsigned char sw2LastState;
@@ -36,7 +37,7 @@ char brakeLStr[20], brakeLStrUpd[6], brakeRStr[20], brakeRStrUpd[6];
 char modeStr[20], modeStrUpd[6];
 char accelXStr[20], accelXStrUpd[6], accelYStr[20], accelYStrUpd[6], accelZStr[20], accelZStrUpd[6];
 char debugTitle[10], settingsTitle[10], calibrateTitle[10], resetTitle[10];
-char buttonHome[3], buttonDebug[3], buttonSettings[3], buttonReset[3], buttonCalibrate[3], buttonYes[3], buttonNo[3];
+char buttonHome[3], buttonDebug[3], buttonSettings[3], buttonReset[3], buttonCalibrate[3], buttonCalibrateGnd[4], buttonCalibrateAir[4], buttonYes[3], buttonNo[3], buttonGo[3];
 unsigned int totalDistInt = 0, totalDistDec = 0;
 unsigned int takeoffInt = 0, landingInt = 0, takeoffDec = 0, landingDec = 0;
 
@@ -63,7 +64,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			}
 			else if(sw3Pressed)
 			{
-				
+				writeUartCommand(0xA0);
 			}
 			else
 			{
@@ -91,11 +92,11 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 		case 2:	//presently calibrate
 			if(sw1Pressed)
 			{
-				
+				writeUartCommand(0x84);
 			}
 			else if(sw2Pressed)
 			{
-				
+				writeUartCommand(0x85);
 			}
 			else if(sw3Pressed)
 			{
@@ -118,6 +119,8 @@ void __attribute__((__interrupt__, no_auto_psv)) _T4Interrupt(void)
 			else if(sw3Pressed)
 			{
 				//reset
+				writeUartCommand(0x42);
+				drawHome();
 			}
 			else
 			{
@@ -174,8 +177,11 @@ void createButtonLabels()
 	sprintf(buttonSettings, "S>");
 	sprintf(buttonReset, "R>");
 	sprintf(buttonCalibrate, "C>");
+	sprintf(buttonCalibrateGnd, "CG>");
+	sprintf(buttonCalibrateAir, "CA>");
 	sprintf(buttonYes, "Y>");
 	sprintf(buttonNo, "N>");
+	sprintf(buttonGo, "GO");
 }
 	
 void calculateFeet()
@@ -232,7 +238,7 @@ void drawHome()
 	createButtonLabels();
 	lcd_string(121, 2, buttonDebug, 0);
 	lcd_string(121, 5, buttonSettings, 0);
-//	lcd_string(121, 7, buttonHome, 0);
+	lcd_string(121, 7, buttonGo, 0);
 }
 
 void updateHome()
@@ -265,6 +271,15 @@ void updateHome()
 		sprintf(totalDistStrUpd, "%u.%u ft ", totalDistInt, totalDistDec);
 	}	
 	lcd_string(54, 4, totalDistStrUpd, 1);
+	
+	if((mode != 43) && (mode != 42))
+	{
+		lcd_string(25, 7, "GO", 1);
+	}
+	else
+	{
+		lcd_string(25, 7, "  ", 1);
+	}	
 }
 
 void drawDebug()
@@ -347,14 +362,30 @@ void drawCalibrate()
 	lcd_string(0,0, calibrateTitle, 1);
 	
 	createButtonLabels();
-//	lcd_string(121, 2, buttonDebug, 0);
-//	lcd_string(121, 5, buttonSettings, 0);
+	lcd_string(116, 2, buttonCalibrateGnd, 0);
+	lcd_string(116, 5, buttonCalibrateAir, 0);
 	lcd_string(121, 7, buttonHome, 0);
+	
+	sprintf(wowLStr, "wowL: %4u", wowL);
+	lcd_string(0,3, wowLStr, 0);
+	sprintf(wowRStr, "wowR: %4u", wowR);
+	lcd_string(0,4, wowRStr, 0);
+	sprintf(wowCalStr, "wowC: %4u", wowCal);
+	lcd_string(0,5, wowCalStr, 0);
+	sprintf(IRStr, "IR: %2u", IR);
+	lcd_string(0,6, IRStr, 0);
 }
 
 void updateCalibrate()
 {
-	
+	sprintf(wowLStrUpd, "%4u", wowL);
+	lcd_string(24,3, wowLStrUpd, 0);
+	sprintf(wowRStrUpd, "%4u", wowR);
+	lcd_string(24,4, wowRStrUpd, 0);
+	sprintf(wowCalStrUpd, "%4u", wowCal);
+	lcd_string(24,5, wowCalStrUpd, 0);
+	sprintf(IRStrUpd, "%2u", IR);
+	lcd_string(16,6, IRStrUpd, 0);
 }
 
 void drawReset()

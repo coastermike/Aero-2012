@@ -10,6 +10,7 @@ unsigned int leftWheelTakeoff = 0;
 unsigned int rightWheelTakeoff = 0;
 unsigned int leftWheelLanding = 0;
 unsigned int rightWheelLanding = 0;
+unsigned int tempRightCount = 0, tempLeftCount = 0;
 unsigned int wowL = 0;
 unsigned int wowR = 0;
 unsigned int wowCal = 0;
@@ -18,6 +19,10 @@ unsigned int mode = 0;
 
 unsigned int tempcount = 0, tempcount1 = 0;
 unsigned int tempClear = 0;
+
+unsigned int calGroundL = 0, calGroundR = 0, calAirL = 0, calAirR = 0, calWowL = 0, calWowR = 0;
+unsigned int calGndComplete = 0, calAirComplete = 0;
+extern unsigned int stateOf;
 
 void __attribute__((__interrupt__, no_auto_psv)) _CompInterrupt(void)
 {
@@ -70,21 +75,54 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 						if(tempcount == 3)
 						{
 							LState = 3;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}	
 						}
 						break;
 					case 2:
 						if(tempcount == 1)
 						{
 							LState = 1;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}
 						}
 						break;
 					case 3:
 						if(tempcount == 2)
 						{
 							LState = 2;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}
 						}
 						break;
 				}			
@@ -93,7 +131,6 @@ void __attribute__((interrupt, no_auto_psv)) _INT1Interrupt (void)
 		INTCON2bits.INT1EP = 1;
 	}
 //	mode = LState;
-	landing = leftWheelTakeoff;
 }
 
 //Left Bottom sensor
@@ -127,21 +164,54 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 						if(tempcount == 3)
 						{
 							LState = 3;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}
 						}
 						break;
 					case 2:
 						if(tempcount == 1)
 						{
 							LState = 1;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}
 						}
 						break;
 					case 3:
 						if(tempcount == 2)
 						{
 							LState = 2;
-							leftWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								leftWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempLeftCount++;
+							}
+							else if(stateOf == 6)
+							{
+								leftWheelLanding++;
+							}
 						}
 						break;
 				}
@@ -151,7 +221,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT2Interrupt (void)
 		
 	}
 //	mode = LState;
-	landing = leftWheelTakeoff;
+
 }
 
 //Right Top sensor
@@ -186,21 +256,54 @@ void __attribute__((interrupt, no_auto_psv)) _INT3Interrupt (void)
 						if(tempcount1 == 2)
 						{
 							RState = 2;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 					case 2:
 						if(tempcount1 == 3)
 						{
 							RState = 3;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 					case 3:
 						if(tempcount1 == 1)
 						{
 							RState = 1;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 				}			
@@ -208,7 +311,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT3Interrupt (void)
 		}
 		INTCON2bits.INT3EP = 0;
 	}
-	mode = RState;
+//	mode = RState;
 //	landing = rightWheelTakeoff;
 }
 
@@ -243,21 +346,54 @@ void __attribute__((interrupt, no_auto_psv)) _INT4Interrupt (void)
 						if(tempcount1 == 2)
 						{
 							RState = 2;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 					case 2:
 						if(tempcount1 == 3)
 						{
 							RState = 3;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 					case 3:
 						if(tempcount1 == 1)
 						{
 							RState = 1;
-							rightWheelTakeoff++;
+							if(stateOf == 0)
+							{
+								rightWheelTakeoff++;
+							}
+							else if((stateOf == 2) || (stateOf == 5))
+							{
+								tempRightCount++;
+							}
+							else if(stateOf == 6)
+							{
+								rightWheelLanding++;
+							}
 						}
 						break;
 				}
@@ -265,7 +401,7 @@ void __attribute__((interrupt, no_auto_psv)) _INT4Interrupt (void)
 		}
 		INTCON2bits.INT4EP = 0;	
 	}
-	mode = RState;
+//	mode = RState;
 //	landing = rightWheelTakeoff;
 }
 
@@ -342,4 +478,52 @@ void initWheels()
 void calibrateWOW()
 {
 	
+}
+
+void calGround()
+{
+	AD1CON1bits.ASAM = 1;
+	while(AD1CON1bits.ASAM && _AD1IF);
+	calGroundL = wowL;
+	calGroundR = wowR;
+
+	calGndComplete = 1;
+}
+
+void calAir()
+{
+	AD1CON1bits.ASAM = 1;
+	while(AD1CON1bits.ASAM && _AD1IF);
+	calAirL = wowL;
+	calAirR = wowR;
+	
+	if(calGndComplete == 1)
+	{
+		calWowL = (unsigned int)(calAirL - calGroundL) * 3 / 4 + calGroundL;
+		calWowR = (unsigned int)(calAirR - calGroundR) * 3 / 4 + calGroundR;
+		wowCal=calWowL;
+		calAirComplete = 1;
+	}	
+}
+
+void reset()
+{
+	takeoff = 0;
+	landing = 0;
+	leftWheelTakeoff = 0;
+	rightWheelTakeoff = 0;
+	leftWheelLanding = 0;
+	rightWheelLanding = 0;
+	
+	stateOf = 0;
+	calGndComplete = 0;
+	calAirComplete = 0;
+}
+
+void start()
+{
+	if(stateOf == 43)
+	{
+		stateOf = 0;
+	}	
 }

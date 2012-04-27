@@ -102,10 +102,12 @@ void __attribute__((__interrupt__, no_auto_psv)) _IC3Interrupt(void)
 
 void setBrakes()
 {
-//	tempOC1 = BRAKE_SCALE * brakeMag * left / 100;
-//	tempOC2 = BRAKE_SCALE * brakeMag * right / 100;
+	tempOC1 = BRAKE_SCALE * brakeMag * left / 100;
+	tempOC2 = BRAKE_SCALE * brakeMag * right / 100;
 	OC1R = BRAKE_SCALE * brakeMag * left / 100;
 	OC2R = BRAKE_SCALE * brakeMag * right / 100;
+	
+	
 }
 	
 void initBrakes()
